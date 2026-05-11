@@ -1,7 +1,19 @@
-import { ExternalLink, Download, FileX2 } from "lucide-react";
+import { ExternalLink, Download, FileX2, Copy } from "lucide-react";
+import { toast } from "sonner";
 import type { Material } from "@/data/materiales";
 import { TIPO_META } from "@/data/materiales";
 import { cn } from "@/lib/utils";
+
+async function copyLink(url: string) {
+  try {
+    await navigator.clipboard.writeText(url);
+    toast.success("Enlace copiado", {
+      description: "Pégalo en una pestaña nueva o en otro navegador si tu bloqueador impide abrirlo.",
+    });
+  } catch {
+    toast.error("No se pudo copiar el enlace");
+  }
+}
 
 const colorClasses: Record<string, string> = {
   primary: "bg-primary-soft text-primary",
@@ -63,15 +75,26 @@ export function MaterialRow({ material }: { material: Material }) {
       </div>
 
       {hasLink ? (
-        <a
-          href={enlace}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`${cta} ${material.titulo}`}
-          className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-lg bg-foreground px-3 py-2 text-xs font-semibold text-background transition-opacity hover:opacity-90"
-        >
-          <Icon className="h-3.5 w-3.5" aria-hidden /> {cta}
-        </a>
+        <div className="flex flex-shrink-0 items-center gap-1.5">
+          <a
+            href={enlace}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${cta} ${material.titulo}`}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-foreground px-3 py-2 text-xs font-semibold text-background transition-opacity hover:opacity-90"
+          >
+            <Icon className="h-3.5 w-3.5" aria-hidden /> {cta}
+          </a>
+          <button
+            type="button"
+            onClick={() => copyLink(enlace)}
+            aria-label="Copiar enlace"
+            title="Copiar enlace"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          >
+            <Copy className="h-3.5 w-3.5" aria-hidden />
+          </button>
+        </div>
       ) : (
         <span className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-lg border border-dashed border-border px-3 py-2 text-xs font-medium text-muted-foreground">
           <Icon className="h-3.5 w-3.5" aria-hidden /> {cta}

@@ -1,7 +1,19 @@
-import { ExternalLink, Download, Link2 } from "lucide-react";
+import { ExternalLink, Download, Copy } from "lucide-react";
+import { toast } from "sonner";
 import type { Material } from "@/data/materiales";
 import { TIPO_META } from "@/data/materiales";
 import { cn } from "@/lib/utils";
+
+async function copyLink(url: string) {
+  try {
+    await navigator.clipboard.writeText(url);
+    toast.success("Enlace copiado", {
+      description: "Pégalo en una pestaña nueva o en otro navegador si tu bloqueador de anuncios impide abrirlo.",
+    });
+  } catch {
+    toast.error("No se pudo copiar el enlace");
+  }
+}
 
 const colorClasses: Record<string, string> = {
   primary: "bg-primary-soft text-primary",
@@ -72,15 +84,26 @@ export function MaterialCard({ material }: { material: Material }) {
 
         <div className="mt-5 flex items-center gap-2">
           {hasLink ? (
-            <a
-              href={enlace}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-foreground px-3.5 py-2.5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
-            >
-              <CtaIcon className="h-4 w-4" />
-              {ctaLabel}
-            </a>
+            <>
+              <a
+                href={enlace}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-foreground px-3.5 py-2.5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
+              >
+                <CtaIcon className="h-4 w-4" />
+                {ctaLabel}
+              </a>
+              <button
+                type="button"
+                onClick={() => copyLink(enlace)}
+                aria-label="Copiar enlace"
+                title="Copiar enlace (útil si tu bloqueador de anuncios impide abrirlo)"
+                className="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                <Copy className="h-4 w-4" aria-hidden />
+              </button>
+            </>
           ) : (
             <span className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-dashed border-border px-3.5 py-2.5 text-sm font-medium text-muted-foreground">
               {ctaLabel}
