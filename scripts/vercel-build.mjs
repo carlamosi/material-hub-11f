@@ -5,7 +5,26 @@ import { join } from "node:path";
 // 1) Run the regular Vite build (client + server bundles into dist/)
 execSync("npx vite build", { stdio: "inherit" });
 
-// 2) Assemble Vercel Build Output API v3 layout (.vercel/output/)
+// 2) Bundle dist/server/server.js into a single self-contained file with all
+//    npm deps inlined — Vercel Edge functions reject bare `import "react"` etc.
+execSync(
+  [
+    "npx esbuild dist/server/server.js",
+    "--bundle",
+    "--format=esm",
+    "--platform=neutral",
+    "--target=es2022",
+    // Keep node: protocol imports as-is — Vercel Edge supports a curated subset.
+    '--external:"node:*"',
+    "--conditions=workerd,worker,browser,import,module,default",
+    "--main-fields=module,main",
+    "--outfile=dist/server-bundled/index.mjs",
+    "--log-level=warning",
+  ].join(" "),
+  { stdio: "inherit" },
+);
+
+// 3) Assemble Vercel Build Output API v3 layout (.vercel/output/)
 const out = ".vercel/output";
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });
@@ -16,12 +35,15 @@ cpSync("dist/client", join(out, "static"), { recursive: true });
 // SSR edge function (one catch-all, name = "index")
 const fnDir = join(out, "functions", "index.func");
 mkdirSync(fnDir, { recursive: true });
-cpSync("dist/server", fnDir, { recursive: true });
 
-// Tiny adapter so Vercel Edge sees a `default export = (request) => Response`
+// Copy the bundled server
+cpSync("dist/server-bundled/index.mjs", join(fnDir, "index.mjs"));
+
+// Adapter: bundled server exports `default = { fetch }` — Vercel Edge expects
+// `default = (request) => Response`.
 writeFileSync(
   join(fnDir, "entry.mjs"),
-  `import server from './server.js';\n` +
+  `import server from './index.mjs';\n` +
     `export default (request) => server.fetch(request, {}, {});\n`,
 );
 
