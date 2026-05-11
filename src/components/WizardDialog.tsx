@@ -310,19 +310,27 @@ function SesionResultado({
               </div>
               <p className="mt-1 text-sm text-muted-foreground">{b.descripcion}</p>
               {b.material ? (
-                <a
-                  href={b.material.enlace}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-3 block border border-ink/15 p-3 transition-colors hover:border-primary"
-                >
-                  <p className="kicker mb-1">{b.material.tipo}</p>
-                  <p className="font-serif text-base leading-snug">{b.material.titulo}</p>
-                  <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{b.material.descripcion}</p>
-                  <span className="mt-2 inline-flex items-center gap-1 text-xs text-primary">
-                    Abrir recurso <Link2 className="h-3 w-3" />
-                  </span>
-                </a>
+                b.material.enlace ? (
+                  <a
+                    href={b.material.enlace}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-3 block border border-ink/15 p-3 transition-colors hover:border-primary"
+                  >
+                    <p className="kicker mb-1">{b.material.tipo}</p>
+                    <p className="font-serif text-base leading-snug">{b.material.titulo}</p>
+                    <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{b.material.descripcion}</p>
+                    <span className="mt-2 inline-flex items-center gap-1 text-xs text-primary">
+                      Abrir recurso <Link2 className="h-3 w-3" />
+                    </span>
+                  </a>
+                ) : (
+                  <div className="mt-3 block border border-ink/15 p-3">
+                    <p className="kicker mb-1">{b.material.tipo}</p>
+                    <p className="font-serif text-base leading-snug">{b.material.titulo}</p>
+                    <p className="mt-1 text-xs italic text-muted-foreground">Sin enlace público disponible — busca por el título.</p>
+                  </div>
+                )
               ) : (
                 <p className="mt-3 text-xs italic text-muted-foreground">— sin material asignado, completa con uno del hub —</p>
               )}
