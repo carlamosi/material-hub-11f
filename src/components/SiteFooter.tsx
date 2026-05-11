@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
+import logo11F from "@/assets/11f-logo.png";
 
 export function SiteFooter() {
   return (
@@ -7,9 +8,7 @@ export function SiteFooter() {
       <div className="container mx-auto grid gap-8 px-4 py-12 sm:px-6 lg:grid-cols-4 lg:px-8">
         <div className="lg:col-span-2">
           <div className="flex items-center gap-2.5">
-            <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-primary text-primary-foreground">
-              <Sparkles className="h-4 w-4" strokeWidth={2.5} />
-            </span>
+            <img src={logo11F} alt="11F" className="h-9 w-9" />
             <span className="font-display text-base font-bold">11F·Hub</span>
           </div>
           <p className="mt-3 max-w-md text-sm text-muted-foreground">
