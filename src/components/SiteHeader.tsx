@@ -3,12 +3,13 @@ import { Sparkles, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-const NAV = [
+type NavItem = { to: "/" | "/materiales" | "/sobre-el-11f" | "/contacto"; label: string; exact?: boolean };
+const NAV: readonly NavItem[] = [
   { to: "/", label: "Inicio", exact: true },
   { to: "/materiales", label: "Materiales" },
   { to: "/sobre-el-11f", label: "Sobre el 11F" },
   { to: "/contacto", label: "Contacto" },
-] as const;
+];
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
