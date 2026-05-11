@@ -118,12 +118,15 @@ function MaterialesPage() {
           {/* Search bar */}
           <div className="mt-8 flex items-center gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <label htmlFor="materiales-search" className="sr-only">Buscar materiales</label>
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
               <input
+                id="materiales-search"
+                data-search
                 type="search"
                 value={search.q}
                 onChange={(e) => update({ q: e.target.value })}
-                placeholder='Busca: "Marie Curie", "matemáticas primaria", "kahoot"...'
+                placeholder='Busca por nombre, disciplina o personaje…  ( / )'
                 className="h-12 w-full rounded-xl border border-border bg-card pl-11 pr-4 text-sm shadow-sm outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/15"
               />
             </div>
