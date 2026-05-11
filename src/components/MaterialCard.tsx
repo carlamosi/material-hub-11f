@@ -23,12 +23,16 @@ function isPdf(url: string) {
 
 export function MaterialCard({ material }: { material: Material }) {
   const meta = TIPO_META[material.tipo];
-  const ctaLabel = isPdf(material.enlace)
-    ? "Descargar PDF"
-    : material.enlace.includes("youtube") || material.enlace.includes("youtu.be")
-      ? "Ver vídeo"
-      : "Abrir recurso";
-  const CtaIcon = isPdf(material.enlace) ? Download : ExternalLink;
+  const enlace = material.enlace ?? "";
+  const hasLink = Boolean(material.enlace);
+  const ctaLabel = !hasLink
+    ? "Sin enlace público"
+    : isPdf(enlace)
+      ? "Descargar PDF"
+      : enlace.includes("youtube") || enlace.includes("youtu.be")
+        ? "Ver vídeo"
+        : "Abrir recurso";
+  const CtaIcon = isPdf(enlace) ? Download : ExternalLink;
 
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-glow">
