@@ -1,7 +1,19 @@
-import { ExternalLink, Download, Link2 } from "lucide-react";
+import { ExternalLink, Download, Link2, Copy } from "lucide-react";
+import { toast } from "sonner";
 import type { Material } from "@/data/materiales";
 import { TIPO_META } from "@/data/materiales";
 import { cn } from "@/lib/utils";
+
+async function copyLink(url: string) {
+  try {
+    await navigator.clipboard.writeText(url);
+    toast.success("Enlace copiado", {
+      description: "Pégalo en una pestaña nueva o en otro navegador si tu bloqueador de anuncios impide abrirlo.",
+    });
+  } catch {
+    toast.error("No se pudo copiar el enlace");
+  }
+}
 
 const colorClasses: Record<string, string> = {
   primary: "bg-primary-soft text-primary",
