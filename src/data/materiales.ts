@@ -126,3 +126,20 @@ export const MATERIALES: Material[] = [
   {"id": "muneca-representando-a-marie-curie-de-pepitas-de-chocolate", "titulo": "Muñeca representando a Marie Curie de Pepitas de Chocolate", "descripcion": "Recurso del catálogo oficial 11F · sección «Materiales Singulares».", "tipo": "Webs", "etapas": ["ESO", "Bachillerato"], "disciplinas": ["General"], "idioma": "Castellano", "enlace": null, "funciona": "no", "verificado": false, "verificadoEn": "2026-05-11"},
   {"id": "detectives-de-crisis-climaticas-y-medioambientales-csic", "titulo": "Detectives de crisis climáticas y medioambientales (CSIC)", "descripcion": "Recurso del catálogo oficial 11F · sección «Materiales Singulares».", "tipo": "Webs", "etapas": ["ESO", "Bachillerato"], "disciplinas": ["General"], "idioma": "Castellano", "enlace": "https://www.recursosdivulgacion.csic.es/proyectos/detectives-de-crisis-climaticas-y-medioambientales", "funciona": "si", "verificado": true, "verificadoEn": "2026-05-11"},
 ];
+
+export const TIPO_META: Record<Tipo, { color: string; emoji: string }> = {
+  Presentaciones: { color: "primary", emoji: "📊" },
+  "Vídeos": { color: "coral", emoji: "🎬" },
+  Juegos: { color: "violet", emoji: "🎮" },
+  Ilustraciones: { color: "amber", emoji: "🎨" },
+  "Pósters": { color: "primary", emoji: "🖼️" },
+  Cómics: { color: "coral", emoji: "💥" },
+  Exposiciones: { color: "violet", emoji: "🏛️" },
+  Calendarios: { color: "amber", emoji: "📅" },
+  Libros: { color: "primary", emoji: "📚" },
+  Pegatinas: { color: "coral", emoji: "✨" },
+  Fichas: { color: "violet", emoji: "📝" },
+  Kahoot: { color: "amber", emoji: "❓" },
+  Podcast: { color: "primary", emoji: "🎙️" },
+  Webs: { color: "violet", emoji: "🌐" },
+};
