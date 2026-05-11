@@ -1,96 +1,58 @@
-## Objetivo
+## Plan: Catálogo definitivo + rediseño editorial-científico
 
-Convertir el hub del 11F en una pieza con carácter editorial-científico (lejos del look "IA genérica"), con datos verificados y un recomendador que pase de wizard a generador de sesión didáctica.
+He parseado el Excel `Lista_de_Materiales_11F_en_la_web-2.xlsx` (Hoja 1, ~96 filas útiles). Cada fila trae: TIPO, Material, Enlace Drive, Enlace fuente oficial / 11F, Funciona? (SI / NO / Otro), notas y rango de edad. Esa es la fuente de verdad.
 
----
+### 1. Reescribir `src/data/materiales.ts` desde el Excel
 
-## 1. Limpieza de datos
+- Generar el array `MATERIALES` 1:1 con las filas del Excel (mantener orden y secciones: Pósters Científicas CASIO, Actividades CASIO, Kahoot CASIO, #NoMoreMatildas, Juego de cartas Canarias, Oceánicas, Presentaciones Primaria/Infantil/Básica/Estadísticas/Microbiólogas/Referentes/Pioneras Arquitectura/Astronomía/Física-Química/Matemáticas/Nobel Química 2020, Ilustraciones (Rosalind Franklin, WOMEN IN STEM, Elise Gravel, Jocelyn Bell, Noethember, InspiraSTEAM, THINK LIKE A GIRL, Hernández, Mary Anning, La ciencia también es nuestra, SaliArtworks, Beatriz Arribas, Mujer Bombilla, Isabel Ruiz, Anna Medina), Materiales Singulares (Marcapáginas, Cientificartas, De niña a científica, Loquita por sus huesos, Rompecabezas, Juego de cartas, ¿Quién es ella?, Sopa de letras, Adivina quién soy, Mujeres 11F Dolores Bueno, Babelbox, Rosco, Mini gymkana, Scratch x2, Las Invisibles, Exposición posters, Con A de AstrónomA, Elise Gravel poster, Investigadoras en la Luz, Astrónomas, Calendari URV, Física nuclear UB, Mujeres Invisibles, STEM Role Model, vídeos varios, podcasts, Naukas, Mujeres en la historia, Bioquímica, Oxford, scientificwomen, Doodles, Sellos, Los 3 Chanchitos, Huellas, Minibiografías, Dossier Zaragoza, Secundando la Igualdad, CCOO matemáticas, Ed. matemática feminista, Calendari Temps de dones, Adivina aventurera, Blog clase de ciencias, Crucigrama aeronáutico, Bebé a Mordor, Directorio WomenInTech, La Científica y el guisante, Tabla periódica, papel plegado, Marie Curie Pepitas, CSIC Detectives).
+- Para cada fila:
+  - `enlace` = primer enlace válido (Drive si existe, si no fuente oficial 11F, si no `null`).
+  - `enlaceFuente` = enlace 11defebrero.org cuando exista (segunda columna).
+  - `funciona`: `"si" | "no" | "parcial"` mapeado de SI / NO / Otro.
+  - `notaEnlace`: comentario del Excel cuando funciona = `"parcial"` (p.ej. "Calendario de 2013", "el enlace no es el correcto", etc.).
+  - `etapas`: derivar de TIPO y "Rango de edad" (Infantil, Primaria, ESO, Bachillerato; eliminar Adultos como ya quedó pactado).
+  - `disciplinas`: inferir del título (Astronomía → Astronomía; Matemáticas → Matemáticas; etc.).
+  - `tipo` normalizado a la lista `TIPOS` (Presentaciones, Ilustraciones, Juegos, Pósters, Vídeos, Podcast, Webs, Cómics, Exposiciones, Calendarios, Libros, Pegatinas, Fichas, Kahoot).
+- Añadir `verificado: boolean` y `enlaceVerificadoEn: string`.
+- Excluir filas sin material real (la fila 38 sólo es comentario, fila 7 es cabecera "ADALT SÓN NOUS"). Filas sin enlace útil se conservan con `enlace: null` y badge gris "Sin enlace público".
 
-- **Eliminar la etapa "Adultos"** del tipo `Etapa`, de los filtros y de cada material que la incluya (sustituir `all` por `["Infantil","Primaria","ESO","Bachillerato"]`).
-- **Reabrir el Excel original** (te pediré que lo re-subas al implementar) y, en paralelo, lanzar una **auditoría HTTP** con script Node sobre los ~76 enlaces actuales:
-  - 200 → enlace válido, se mantiene.
-  - 3xx → seguir redirección y actualizar al destino final.
-  - 404/timeout → marcar `enlace: null` y mostrar el material como "enlace no disponible" (sin botón de descarga, badge gris).
-- Reconciliar URLs: para cada fila del Excel, comparar con `materiales.ts` y reemplazar la URL si difiere. Materiales que no estén en el Excel quedan marcados `fuente: "curado"`.
+### 2. Auditoría HTTP de enlaces
 
-## 2. Dirección visual: "Editorial científico"
+- Script `scripts/audit-links.mjs`:
+  - HEAD → si 405/403, GET; sigue redirecciones; timeout 10 s.
+  - Marca `verificado: true` si `2xx`/`3xx→2xx`.
+  - Marca `funciona: "no"` con `notaEnlace: "404 / sin respuesta"` si `4xx`/`5xx`/timeout. No sobrescribe entradas ya marcadas como NO en el Excel.
+  - Excluye dominios que bloquean bots de auditoría (drive.google.com, docs.google.com → marca `verificado: true` por confianza del Excel).
+  - Genera `scripts/audit-report.json` y aplica los cambios a `src/data/materiales.ts` automáticamente (regeneración del archivo).
+- Output en consola: tabla `OK / ROTO / OMITIDO`.
 
-Inspiración: revistas tipo *Nautilus*, *Scientific American*, cuadernos de Marie Curie.
+### 3. Rediseño editorial-científico (aprobado)
 
-**Tipografía** (Google Fonts, dos familias):
+- Tipografía: Fraunces (serif variable) para titulares, Inter Tight para cuerpo (Google Fonts en `__root.tsx`).
+- Tokens en `src/styles.css`: papel crema `--paper`, tinta `--ink`, turquesa `--accent` (#00B4BC) reservado para subrayados/citas, coral `--coral` para badge "novedad".
+- Hero asimétrico con kicker "Nº 11 · Febrero", sumario lateral, subrayado SVG dibujado a mano, números de sección en serif, footer con colofón.
+- `/materiales`: vista índice editorial (número, título serif, badges minimalistas, CTA único) + toggle a vista mosaico. Sidebar "Filtros de redacción" con chips activos y placeholder rotativo en el buscador. Empty state ilustrado.
+- Sello "Verificado" para enlaces auditados; badge gris "Sin enlace público" cuando `enlace == null`; badge ámbar "Enlace parcial" con tooltip de la nota cuando `funciona = "parcial"`.
 
-- Titulares: **Fraunces** (serif con carácter, opsz variable) en pesos 400/600, con `font-optical-sizing: auto`.
-- Cuerpo y UI: **Inter Tight** 400/500.
-- Detalles editoriales: números en versalitas, kicker en mayúsculas tracking ancho.
+### 4. Recomendador "Diseña tu sesión del 11F" (ambas modalidades)
 
-**Retícula**:
+- Wizard conversacional 3 pasos (contexto → intención → formato) que termina mostrando una **sesión didáctica completa**: calentamiento → actividad central → cierre, combinando hasta 3 materiales del catálogo verificados.
+- Scoring determinista cliente: peso alto a `etapa`, medio a `disciplina` y `tipo`, ajuste por duración estimada.
+- Botones: copiar al portapapeles, imprimir (CSS print), enlace serializable en `?sesion=...`. Persistencia en localStorage.
 
-- Hero asimétrico tipo portada de revista: bloque de texto a la izquierda con kicker "Nº 11 · Febrero", titular serif gigante con un tachado/subrayado a mano sobre la palabra clave, columna lateral con "Sumario" estilo índice de revista linkando a las secciones.
-- Listados con líneas finas separadoras (`border-b border-foreground/10`), no cards con sombras.
-- Mucho espacio en blanco; columnas de texto con `max-width: 65ch`.
+### 5. Sorpresas
 
-**Paleta** (manteniendo `#00B4BC`):
+- Cita del día (rotación diaria de científicas con firma SVG manuscrita).
+- Cuenta atrás al 11F · 2027.
+- Modo papel cuadriculado conmutable.
 
-- Fondo papel: `oklch(0.985 0.005 90)` (crema sutil).
-- Tinta: `oklch(0.18 0.02 220)` (casi negro azulado).
-- Acento turquesa (#00B4BC) reservado a subrayados, números, hover y un sello tipo "imprimatur".
-- Acento secundario coral muy puntual para badges de novedad.
+### 6. Detalles técnicos
 
-**Detalles que humanizan**:
+- Ningún cambio de stack. Sólo frontend + datos.
+- Componentes nuevos: `IndiceEditorial`, `MaterialEntry`, `SesionRecomendada`, `WizardSesion`, `CitaDelDia`, `CountdownColofon`, `KeyboardShortcuts`.
+- Utilidades: `recomendarSesion(input): SesionRecomendada` en `src/lib/recomendador.ts`.
+- Test rápido manual del audit script antes de aplicar al data file.
 
-- Subrayados SVG dibujados a mano en titulares clave.
-- Pequeñas marcas de anotación (asteriscos, llaves, flechas) en SVG inline al margen.
-- Números de sección estilo revista: "01 — MATERIALES", "02 — RECOMENDADOR".
-- Footer con colofón tipo editorial (créditos, tirada, fecha).
-- Microinteracciones: hover de tarjetas con desplazamiento de 2px y aparición de una flecha "→ leer".
-- Cero degradados violáceos genéricos, cero glassmorphism.
+### Pregunta única antes de implementar
 
-## 3. Página `/materiales` (rediseño)
-
-- Reemplazar tarjetas actuales por **listado tipo índice editorial**: cada material es una fila con número, título serif, descripción breve, badges minimalistas (etapa · tipo · idioma) y un único CTA `Abrir ↗`.
-- Vista alternativa "mosaico" para quien prefiera retícula (toggle discreto).
-- Sidebar de filtros como **"Filtros de redacción"** con chips activos arriba y conteo en vivo.
-- Buscador con placeholder rotativo ("Buscar Marie Curie…", "Buscar pósters de primaria…").
-- Empty state ilustrado a línea (no genérico).
-
-## 4. Recomendador → "Diseña tu sesión del 11F"
-
-Sustituye el `WizardDialog` actual por una experiencia de 3 pasos + resultado:
-
-**Paso 1 — Contexto**: etapa educativa, asignatura, tiempo disponible (20/45/90 min), idioma.
-**Paso 2 — Intención**: chips múltiples ("inspirar", "investigar", "crear", "debatir", "celebrar").
-**Paso 3 — Formato preferido**: visual, manipulativo, audiovisual, lúdico.
-
-**Resultado — Secuencia didáctica generada**:
-
-- Calentamiento (5–10 min): un material corto (vídeo/póster).
-- Actividad central (20–60 min): material principal coherente con intención.
-- Cierre (5–15 min): juego, kahoot o ficha de reflexión.
-- Cada bloque con su material, duración estimada y un campo de notas editable.
-- Acciones: **copiar al portapapeles** (texto plano formateado para enviar a claustro), **imprimir** (CSS print con cabecera "Sesión 11F · [fecha]"), **enlace permanente** (estado serializado en query params, sin backend).
-
-Algoritmo: scoring sencillo en cliente que pondera coincidencia de etapa (peso alto), disciplina, tipo preferido y duración estimada por tipo de material (constante por `Tipo`). Sin IA, determinista.
-
-## 5. Sorpresas (los detalles que rompen el "look IA")
-
-- **"Cita del día"**: al cargar la home, una cita rotativa de una científica (Curie, Mayer, Ride, Yonath…) en una banda tipográfica grande con su firma manuscrita en SVG.
-- **Modo "papel cuadriculado"** opcional: toggle en el footer que activa un fondo de retícula 4mm sutil tipo cuaderno.
-- **Cuenta atrás al 11F** discreta en el header ("Faltan 23 días para el 11F") que desaparece tras la fecha. Recuerda q seria el 11f de 2027
-- **Sello "verificado"** en cada material cuyo enlace ha pasado la auditoría HTTP, con tooltip "Comprobado el [fecha]".
-- &nbsp;
-
-## 6. Detalles técnicos
-
-- Quitar `Adultos` del enum `ETAPAS` y depurar materiales (script de migración o edición manual de `materiales.ts`).
-- Añadir campo `verificado: boolean` y `enlaceVerificadoEn: string` a `Material`.
-- Script `scripts/audit-links.mjs` (Node, `fetch` con timeout 8s, HEAD con fallback a GET) que reescribe `materiales.ts` con el campo `verificado`.
-- Tipografías con `<link rel="preconnect">` a Google Fonts en `__root.tsx`.
-- Recomendador: nuevo componente `<SesionRecomendada>` + utilidad `recomendarSesion(input): Bloque[]` testeable.
-- CSS de impresión en `styles.css` (`@media print`).
-- Persistencia de modo papel y atajos en `localStorage`.
-
-## 7. Necesito de ti antes de implementar
-
-- **Re-subir el Excel** (`11F_materiales.xlsx` o equivalente) para reconciliar enlaces fila a fila.
-
-Cuando tenga el Excel, ejecuto auditoría + reconciliación, depuro "Adultos", aplico el rediseño editorial y el nuevo recomendador en una sola tanda.
+Confirma si quieres que durante la auditoría aplique el resultado **directamente** sobre `src/data/materiales.ts` (sobrescribir `funciona`/`verificado`) o que **sólo genere el reporte** y tú decidas qué desactivar. Por defecto aplicaría directamente y dejaría la nota con la razón.
