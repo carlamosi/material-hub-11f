@@ -331,19 +331,22 @@ function FilterGroup<T extends string>({
   value: T | undefined;
   onSelect: (v: T | undefined) => void;
 }) {
+  const groupId = `filter-${label.replace(/\s+/g, "-").toLowerCase()}`;
   return (
     <div>
-      <h3 className="mb-2.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+      <h3 id={groupId} className="mb-2.5 text-xs font-bold uppercase tracking-wider text-foreground/70">
         {label}
       </h3>
-      <div className="flex flex-wrap gap-1.5">
+      <div role="group" aria-labelledby={groupId} className="flex flex-wrap gap-1.5">
         <button
+          type="button"
+          aria-pressed={!value}
           onClick={() => onSelect(undefined)}
           className={cn(
-            "rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
+            "rounded-full px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
             !value
               ? "bg-primary text-primary-foreground shadow-sm"
-              : "bg-muted text-muted-foreground hover:bg-accent",
+              : "bg-muted text-foreground/80 hover:bg-accent hover:text-foreground",
           )}
         >
           Todos
@@ -351,12 +354,14 @@ function FilterGroup<T extends string>({
         {options.map((o) => (
           <button
             key={o}
+            type="button"
+            aria-pressed={value === o}
             onClick={() => onSelect(o)}
             className={cn(
-              "rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
+              "rounded-full px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
               value === o
                 ? "bg-primary text-primary-foreground shadow-sm"
-                : "bg-muted text-muted-foreground hover:bg-accent",
+                : "bg-muted text-foreground/80 hover:bg-accent hover:text-foreground",
             )}
           >
             {o}
