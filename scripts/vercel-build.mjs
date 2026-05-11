@@ -3,7 +3,7 @@ import { cpSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 // 1) Run the regular Vite build (client + server bundles into dist/)
-execSync("vite build", { stdio: "inherit" });
+execSync("npx vite build", { stdio: "inherit" });
 
 // 2) Assemble Vercel Build Output API v3 layout (.vercel/output/)
 const out = ".vercel/output";
