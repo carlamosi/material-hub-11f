@@ -129,7 +129,7 @@ export function sesionATexto(bloques: Bloque[], ctx: Contexto): string {
     lines.push(`  ${b.descripcion}`);
     if (b.material) {
       lines.push(`  • ${b.material.titulo} [${b.material.tipo}]`);
-      lines.push(`    ${b.material.enlace}`);
+      if (b.material.enlace) lines.push(`    ${b.material.enlace}`);
     } else {
       lines.push(`  • (Sin material asignado)`);
     }
