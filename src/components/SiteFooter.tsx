@@ -1,63 +1,47 @@
 import { Link } from "@tanstack/react-router";
-import { Grid2x2, Keyboard } from "lucide-react";
-import { usePaperMode } from "@/hooks/use-paper-mode";
+import { Sparkles, Heart } from "lucide-react";
 
 export function SiteFooter() {
-  const { on, toggle } = usePaperMode();
-
   return (
-    <footer className="rule-t mt-24 bg-paper">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Colofón */}
-        <div className="grid gap-10 py-14 lg:grid-cols-12">
-          <div className="lg:col-span-5">
-            <p className="kicker">Colofón</p>
-            <p className="mt-3 font-serif text-2xl leading-snug">
-              <span className="underline-hand">Once·F</span> es un hub editorial de materiales abiertos para celebrar el <span className="italic">Día Internacional de la Mujer y la Niña en la Ciencia</span> en cualquier aula.
-            </p>
-            <p className="mt-4 text-sm text-muted-foreground prose-ed">
-              Curado a partir de fuentes oficiales (11defebrero.org, Mujeres con Ciencia, CASIO Educación, IEO, CSIC y muchas docentes anónimas). Cada enlace verificado por HTTP.
-            </p>
+    <footer className="border-t border-border/60 bg-muted/30">
+      <div className="container mx-auto grid gap-8 px-4 py-12 sm:px-6 lg:grid-cols-4 lg:px-8">
+        <div className="lg:col-span-2">
+          <div className="flex items-center gap-2.5">
+            <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-primary text-primary-foreground">
+              <Sparkles className="h-4 w-4" strokeWidth={2.5} />
+            </span>
+            <span className="font-display text-base font-bold">11F·Hub</span>
           </div>
-
-          <div className="lg:col-span-3">
-            <p className="kicker">Sumario</p>
-            <ul className="mt-3 space-y-1.5 text-sm">
-              <li><Link to="/" className="link-ed">00 · Portada</Link></li>
-              <li><Link to="/materiales" className="link-ed">01 · Materiales</Link></li>
-              <li><Link to="/sobre-el-11f" className="link-ed">02 · Sobre el 11F</Link></li>
-              <li><Link to="/contacto" className="link-ed">03 · Contacto</Link></li>
-            </ul>
-          </div>
-
-          <div className="lg:col-span-4">
-            <p className="kicker">Fuentes</p>
-            <ul className="mt-3 space-y-1.5 text-sm">
-              <li><a href="https://11defebrero.org" target="_blank" rel="noreferrer" className="link-ed">11defebrero.org</a></li>
-              <li><a href="https://mujeresconciencia.com" target="_blank" rel="noreferrer" className="link-ed">Mujeres con Ciencia</a></li>
-              <li><a href="https://www.cientificascasio.com/recursos" target="_blank" rel="noreferrer" className="link-ed">Científicas CASIO</a></li>
-              <li><a href="https://oceanicas.ieo.es" target="_blank" rel="noreferrer" className="link-ed">Oceánicas (IEO)</a></li>
-            </ul>
-          </div>
+          <p className="mt-3 max-w-md text-sm text-muted-foreground">
+            Recursos abiertos para celebrar el Día Internacional de la Mujer y la Niña en la Ciencia. Filtra, encuentra y descarga al instante.
+          </p>
         </div>
 
-        {/* Cintilla inferior */}
-        <div className="rule-t flex flex-col items-start justify-between gap-3 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center">
-          <p className="num">© {new Date().getFullYear()} Once·F · Recursos abiertos · Tirada digital ilimitada</p>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={toggle}
-              className="inline-flex items-center gap-1.5 border border-ink/15 px-2.5 py-1.5 hover:border-primary hover:text-primary"
-              aria-pressed={on}
-              title="Activar fondo cuadriculado"
-            >
-              <Grid2x2 className="h-3.5 w-3.5" /> Modo papel {on ? "ON" : "OFF"}
-            </button>
-            <span className="hidden items-center gap-1 text-muted-foreground sm:inline-flex">
-              <Keyboard className="h-3.5 w-3.5" />
-              <span className="num">/</span> buscar · <span className="num">r</span> recomendador · <span className="num">g m</span> materiales
-            </span>
-          </div>
+        <div>
+          <h3 className="text-sm font-semibold">Navegación</h3>
+          <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+            <li><Link to="/materiales" className="hover:text-primary">Hub de materiales</Link></li>
+            <li><Link to="/sobre-el-11f" className="hover:text-primary">Sobre el 11F</Link></li>
+            <li><Link to="/contacto" className="hover:text-primary">Contacto</Link></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-sm font-semibold">Fuentes oficiales</h3>
+          <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+            <li><a href="https://11defebrero.org" target="_blank" rel="noreferrer" className="hover:text-primary">11defebrero.org</a></li>
+            <li><a href="https://mujeresconciencia.com" target="_blank" rel="noreferrer" className="hover:text-primary">Mujeres con Ciencia</a></li>
+            <li><a href="https://www.cientificascasio.com/recursos" target="_blank" rel="noreferrer" className="hover:text-primary">Científicas CASIO</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="border-t border-border/60">
+        <div className="container mx-auto flex flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-muted-foreground sm:flex-row sm:px-6 lg:px-8">
+          <p>© {new Date().getFullYear()} 11F·Hub. Recursos de uso educativo.</p>
+          <p className="inline-flex items-center gap-1">
+            Hecho con <Heart className="h-3.5 w-3.5 fill-coral text-coral" /> para docentes y curiosas.
+          </p>
         </div>
       </div>
     </footer>
