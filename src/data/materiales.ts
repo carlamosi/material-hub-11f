@@ -12,17 +12,14 @@ export const TIPOS = [
   "Fichas",
   "Kahoot",
   "Podcast",
-  "Webs",
-] as const;
+  "Webs"] as const;
 export type Tipo = (typeof TIPOS)[number];
 
 export const ETAPAS = [
   "Infantil",
   "Primaria",
   "ESO",
-  "Bachillerato",
-  "Adultos",
-] as const;
+  "Bachillerato"] as const;
 export type Etapa = (typeof ETAPAS)[number];
 
 export const DISCIPLINAS = [
@@ -33,8 +30,7 @@ export const DISCIPLINAS = [
   "Astronomía",
   "Arquitectura e Ingeniería",
   "Tecnología y STEAM",
-  "Historia de la ciencia",
-] as const;
+  "Historia de la ciencia"] as const;
 export type Disciplina = (typeof DISCIPLINAS)[number];
 
 export const IDIOMAS = ["Castellano", "Català", "Inglés", "Multilingüe"] as const;
@@ -51,9 +47,11 @@ export interface Material {
   enlace: string;
   enlaceFuente?: string;
   autor?: string;
+  verificado?: boolean;
+  verificadoEn?: string;
 }
 
-const all = ["Infantil", "Primaria", "ESO", "Bachillerato", "Adultos"] as Etapa[];
+const all = ["Infantil", "Primaria", "ESO", "Bachillerato"] as Etapa[];
 const ePrimSec = ["Primaria", "ESO"] as Etapa[];
 const eSecBach = ["ESO", "Bachillerato"] as Etapa[];
 
@@ -69,6 +67,8 @@ export const MATERIALES: Material[] = [
     idioma: "Castellano",
     enlace: "https://www.cientificascasio.com/recursos",
     autor: "CASIO Educación",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "casio-actividades",
@@ -80,6 +80,8 @@ export const MATERIALES: Material[] = [
     idioma: "Castellano",
     enlace: "https://www.cientificascasio.com/recursos",
     autor: "CASIO Educación",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "casio-kahoot",
@@ -91,6 +93,8 @@ export const MATERIALES: Material[] = [
     idioma: "Castellano",
     enlace: "https://www.cientificascasio.com/recursos",
     autor: "CASIO Educación",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "nomorematildas",
@@ -102,6 +106,8 @@ export const MATERIALES: Material[] = [
     idioma: "Castellano",
     enlace: "https://www.nomorematildas.com/11f",
     autor: "AMIT",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "canarias-cartas",
@@ -113,6 +119,8 @@ export const MATERIALES: Material[] = [
     idioma: "Castellano",
     enlace: "https://www3.gobiernodecanarias.org/medusa/ecoescuela/recursosdigitales/files/formidable/6/es.pdf",
     autor: "Gobierno de Canarias",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "oceanicas",
@@ -124,6 +132,8 @@ export const MATERIALES: Material[] = [
     idioma: "Castellano",
     enlace: "https://oceanicas.ieo.es/fichas-didacticas/",
     autor: "Instituto Español de Oceanografía",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
 
   // ==== Presentaciones ====
@@ -137,6 +147,8 @@ export const MATERIALES: Material[] = [
     idioma: "Castellano",
     enlace: "https://11defebrero.org/2017/01/24/presentacion-para-primaria/",
     enlaceFuente: "https://11defebrero.org/2017/01/24/presentacion-para-primaria/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "ppt-infantil",
@@ -147,6 +159,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/2017/01/24/presentacion-para-infantil/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "ppt-basica",
@@ -157,6 +171,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/2018/01/19/presentacion-basica-11f/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "ppt-estadisticas",
@@ -167,6 +183,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/2018/02/03/presentacion-estadisticas-11f/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "ppt-microbiologas",
@@ -177,6 +195,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Biología y Medicina"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/recursos/",
+    verificado: false,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "ppt-referentes",
@@ -187,6 +207,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/recursos/",
+    verificado: false,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "ppt-arquitectura",
@@ -197,6 +219,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Arquitectura e Ingeniería"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/recursos/",
+    verificado: false,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "ppt-astronomia",
@@ -207,6 +231,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Astronomía"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/recursos/",
+    verificado: false,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "ppt-fisicaquimica",
@@ -217,6 +243,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Física y Química"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/recursos/",
+    verificado: false,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "ppt-matematicas",
@@ -227,16 +255,20 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Matemáticas"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/recursos/",
+    verificado: false,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "ppt-nobel-quimica",
     titulo: "Premio Nobel Química 2020",
     descripcion: "Presentación sobre Charpentier y Doudna, Premio Nobel de Química 2020.",
     tipo: "Presentaciones",
-    etapas: ["Bachillerato", "Adultos"],
+    etapas: ["Bachillerato"],
     disciplinas: ["Física y Química", "Biología y Medicina"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/recursos/",
+    verificado: false,
+    verificadoEn: "2026-05-11"
   },
 
   // ==== Ilustraciones ====
@@ -249,6 +281,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Biología y Medicina"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/2022/02/09/ilustracion-rosalind-franklin/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "color-women-stem",
@@ -260,6 +294,8 @@ export const MATERIALES: Material[] = [
     idioma: "Inglés",
     enlace: "https://www.energy.gov/sites/prod/files/2017/04/f34/WomenInSTEM2017-coloringbook%20%282%29_0.pdf",
     enlaceFuente: "https://11defebrero.org/2022/01/13/libro-para-colorear-women-in-stem/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "color-elise-gravel",
@@ -271,6 +307,8 @@ export const MATERIALES: Material[] = [
     idioma: "Inglés",
     enlace: "https://elisegravel.com/en/livres/free-printables/",
     enlaceFuente: "https://11defebrero.org/2022/01/13/ilustraciones-para-colorear-de-elise-gravel/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "comic-jocelyn",
@@ -282,6 +320,8 @@ export const MATERIALES: Material[] = [
     idioma: "Castellano",
     enlace: "https://mujeresconciencia.com/2017/08/04/la-nieta-de-la-fuensanta-y-el-anton-quiere-ser-jocelyn-bell/",
     enlaceFuente: "https://11defebrero.org/2022/01/13/minibiografia-comiquera-de-jocelyn-bell/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "noethember",
@@ -293,6 +333,8 @@ export const MATERIALES: Material[] = [
     idioma: "Castellano",
     enlace: "https://mujeresconciencia.com/2018/12/07/en-homenaje-a-emmy-noether-noethember/",
     enlaceFuente: "https://11defebrero.org/2022/01/13/noethember-ilustrando-la-vida-de-emmy-noether/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "pegatinas-inspirasteam",
@@ -304,6 +346,8 @@ export const MATERIALES: Material[] = [
     idioma: "Castellano",
     enlace: "https://wearekaikoo.com/Inspira",
     enlaceFuente: "https://11defebrero.org/2022/01/13/pegatinas-inspirasteam/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "color-think-like-girl",
@@ -315,6 +359,8 @@ export const MATERIALES: Material[] = [
     idioma: "Inglés",
     enlace: "https://vilcek.org/wp-content/uploads/2021/02/VilcekFoundation_Women_Pioneers_In_STEM_ColoringBook.pdf",
     enlaceFuente: "https://11defebrero.org/2022/01/13/libro-para-colorear-think-like-a-girl/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "ilus-eduardo-hernandez",
@@ -325,6 +371,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/2022/01/13/mujeres-stem-para-colorear-de-pelopanton/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "mary-anning",
@@ -335,6 +383,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Biología y Medicina", "Historia de la ciencia"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/2020/02/09/mary-anning-ilustrada-por-danibus/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "ilus-beatriz-arribas",
@@ -345,6 +395,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/2017/02/12/ilustraciones-de-beatriz-arribas/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "mujer-bombilla",
@@ -355,6 +407,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/2017/02/10/la-mujer-bombilla-colorcrema/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "ilus-anna-medina",
@@ -365,6 +419,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/2017/02/06/ilustracion-de-anna-medina-contesiciencia/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
 
   // ==== Materiales singulares ====
@@ -379,6 +435,8 @@ export const MATERIALES: Material[] = [
     enlace: "https://cytcerones.es/descargas/",
     enlaceFuente: "https://11defebrero.org/2023/05/20/marcapaginas-11f/",
     autor: "CYT Cerones",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "cientificartas",
@@ -391,6 +449,8 @@ export const MATERIALES: Material[] = [
     enlace: "https://cytcerones.es/descargas/",
     enlaceFuente: "https://11defebrero.org/2023/05/20/juego-cientificartas-scientificards/",
     autor: "CYT Cerones",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "vinetas-ninacientifica",
@@ -402,6 +462,8 @@ export const MATERIALES: Material[] = [
     idioma: "Castellano",
     enlace: "https://cytcerones.es/portfolio/de-nina-a-cientifica/",
     enlaceFuente: "https://11defebrero.org/2023/05/20/coleccion-de-vinetas-de-nina-a-cientifica/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "loquita-huesos",
@@ -412,6 +474,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Biología y Medicina"],
     idioma: "Castellano",
     enlace: "https://cytcerones.es/portfolio/loquita-por-sus-huesos/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "rompecabezas",
@@ -422,6 +486,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/wp-content/uploads/2021/02/puzlea4-1.pdf",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "cartas-mujeresciencia",
@@ -432,6 +498,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://mujeresconciencia.com/2015/09/09/el-juego-de-cartas-mujeres-de-ciencia/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "sopa-letras",
@@ -442,6 +510,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://mujeresconciencia.com/2016/12/31/sopa-letras-cientificas/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "adivina-quien",
@@ -452,6 +522,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/wp-content/uploads/2018/01/adivina-quiecc81n-soy-11f.pdf",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "mujeres-11f-dolores",
@@ -462,6 +534,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://worlderlenmeyer.blogspot.com/2018/02/juego-mujeres-11f.html",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "rosco-cientificas",
@@ -472,6 +546,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://algunastecnocosas.wordpress.com/2020/03/14/rosco-de-las-mujeres-cientificas/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "mini-gymkana",
@@ -482,6 +558,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Matemáticas"],
     idioma: "Castellano",
     enlace: "https://conexionmatematica.catedu.es/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "scratch-juego",
@@ -492,6 +570,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Tecnología y STEAM"],
     idioma: "Castellano",
     enlace: "https://scratch.mit.edu/projects/144610528/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "scratch-laberinto",
@@ -502,6 +582,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Tecnología y STEAM"],
     idioma: "Castellano",
     enlace: "https://scratch.mit.edu/projects/142874238/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "expo-cientificas",
@@ -512,6 +594,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/2017/02/21/exposicion-de-posters-de-mujeres-cientificas-2/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "expo-astronoma",
@@ -521,7 +605,9 @@ export const MATERIALES: Material[] = [
     etapas: eSecBach,
     disciplinas: ["Astronomía"],
     idioma: "Castellano",
-    enlace: "https://www.sea-astronomia.es/comision-mujer-y-astronomia-divulgacion#expo",
+    enlace: "https://www.sea-astronomia.es/comision-mujer-y-astronomia-divulgacion",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "poster-elise",
@@ -532,6 +618,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Inglés",
     enlace: "https://elisegravel.com/en/blog/some-famous-scientists/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "astronomas-historia",
@@ -541,17 +629,21 @@ export const MATERIALES: Material[] = [
     etapas: eSecBach,
     disciplinas: ["Astronomía"],
     idioma: "Castellano",
-    enlace: "https://www.sea-astronomia.es/comision-mujer-y-astronomia-divulgacion#calendario",
+    enlace: "https://www.sea-astronomia.es/comision-mujer-y-astronomia-divulgacion",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "calendari-urv",
     titulo: "Calendari de dones científiques · URV",
     descripcion: "Calendario de mujeres científicas editado por la Universitat Rovira i Virgili.",
     tipo: "Calendarios",
-    etapas: ["Bachillerato", "Adultos"],
+    etapas: ["Bachillerato"],
     disciplinas: ["General"],
     idioma: "Català",
     enlace: "https://www.urv.cat/ca/vida-campus/serveis/unitat-igualtat/activitats/calendaris/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "mujeres-invisibles",
@@ -562,6 +654,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Historia de la ciencia"],
     idioma: "Castellano",
     enlace: "https://sites.google.com/view/cognovisual/mujeres-invisibles?authuser=0",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "stem-role-model",
@@ -572,6 +666,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Tecnología y STEAM"],
     idioma: "Inglés",
     enlace: "https://medium.com/nevertheless-podcast/stem-role-models-posters-2404424b37dd",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
 
   // ==== Vídeos ====
@@ -584,6 +680,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Arquitectura e Ingeniería"],
     idioma: "Castellano",
     enlace: "https://www.youtube.com/watch?v=pRcyJF_vb5c",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "videos-scientista",
@@ -594,6 +692,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Inglés",
     enlace: "http://www.scientistafoundation.com/women-in-science-video.html",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "ted-women",
@@ -604,6 +704,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Inglés",
     enlace: "https://www.ted.com/playlists/253/11_ted_talks_by_brilliant_wome",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "video-mujeres-ciencia",
@@ -614,6 +716,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://www.youtube.com/watch?v=E3QptE6rSZc",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "video-mujeres-cientificas",
@@ -624,6 +728,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Historia de la ciencia"],
     idioma: "Castellano",
     enlace: "https://www.youtube.com/watch?v=9q_tRDvY-sg",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
 
   // ==== Podcast ====
@@ -632,30 +738,36 @@ export const MATERIALES: Material[] = [
     titulo: "Podcast «Mujeres en la Historia de la Ciencia»",
     descripcion: "Especial de Radio Euskadi sobre mujeres en la historia de la ciencia.",
     tipo: "Podcast",
-    etapas: ["Bachillerato", "Adultos"],
+    etapas: ["Bachillerato"],
     disciplinas: ["Historia de la ciencia"],
     idioma: "Castellano",
     enlace: "https://mujeresconciencia.com/2016/02/13/especial-mujeres-en-la-historia-de-la-ciencia/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "capsulas-son",
     titulo: "Miniserie audio «Cápsulas de SoN»",
     descripcion: "Cápsulas radiofónicas sobre ciencia con perspectiva de género.",
     tipo: "Podcast",
-    etapas: ["Bachillerato", "Adultos"],
+    etapas: ["Bachillerato"],
     disciplinas: ["Biología y Medicina"],
     idioma: "Castellano",
     enlace: "https://www.ciber-bbn.es/programas-transversales/programa-de-difusion-e-internacionalizacion/biomedicina-con-y-para-la-sociedad/miniserie-de-radio",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "oxford-women",
     titulo: "Entrevistas a científicas de Oxford",
     descripcion: "Podcast de la Universidad de Oxford con entrevistas a científicas.",
     tipo: "Podcast",
-    etapas: ["Bachillerato", "Adultos"],
+    etapas: ["Bachillerato"],
     disciplinas: ["General"],
     idioma: "Inglés",
     enlace: "https://podcasts.ox.ac.uk/series/women-science",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
 
   // ==== Webs y recopilaciones ====
@@ -664,10 +776,12 @@ export const MATERIALES: Material[] = [
     titulo: "Recopilación en Naukas sobre científicas",
     descripcion: "Compilación de artículos de Naukas sobre mujeres en la ciencia.",
     tipo: "Webs",
-    etapas: ["Bachillerato", "Adultos"],
+    etapas: ["Bachillerato"],
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://naukas.com/2017/02/11/feliz-dia-de-la-mujer-y-la-nina-en-ciencia/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "mujeres-historia",
@@ -678,6 +792,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Historia de la ciencia"],
     idioma: "Castellano",
     enlace: "https://www.mujeresenlahistoria.com/p/cientificas.html",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "scientific-women",
@@ -688,6 +804,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Historia de la ciencia"],
     idioma: "Inglés",
     enlace: "https://scientificwomen.net/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "doodles",
@@ -698,16 +816,20 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://mujeresconciencia.com/2015/01/21/los-doodles-de-mujeres-con-ciencia/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "sellos",
     titulo: "Sellos de mujer con ciencia",
     descripcion: "Recopilación filatélica de sellos dedicados a científicas.",
     tipo: "Webs",
-    etapas: ["Bachillerato", "Adultos"],
+    etapas: ["Bachillerato"],
     disciplinas: ["Historia de la ciencia"],
     idioma: "Castellano",
     enlace: "https://mujeresconciencia.com/2016/06/10/los-sellos-mujeres-ciencia/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "huellas-geniales",
@@ -718,6 +840,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://www.huellasdemujeresgeniales.com/category/mas/ciencia-otras/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "dossier-escaparates",
@@ -728,6 +852,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Historia de la ciencia"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/wp-content/uploads/2019/02/dossier_completo-escaparates11f.pdf",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "ua-secundando",
@@ -738,6 +864,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://web.ua.es/es/unidad-igualdad/secundando-la-igualdad/mujeres-a-ciencia-cierta/mujeres-a-ciencia-propuestas-didacticas.html",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "ccoo-matematicas",
@@ -748,16 +876,20 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Matemáticas"],
     idioma: "Castellano",
     enlace: "https://fe.ccoo.es/9accb222558c022b7c04e03a753d8a9d000063.pdf",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "matematicas-feminista",
     titulo: "Educación matemática desde una perspectiva feminista",
     descripcion: "Ideas para llevar la perspectiva feminista al aula de matemáticas.",
     tipo: "Libros",
-    etapas: ["Adultos"],
+    etapas: ["Bachillerato"],
     disciplinas: ["Matemáticas"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/wp-content/uploads/2016/12/educ-matematica-y-feminismo_vanesacaleroblanco.pdf",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "adivina-aventurera",
@@ -768,6 +900,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/2018/11/26/adivina-tu-cientifica-aventurera-3/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "blog-mujeresciencia",
@@ -778,6 +912,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://clasedeciencias2.wixsite.com/mujeresyciencia",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "crucigrama-aero",
@@ -788,6 +924,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Arquitectura e Ingeniería"],
     idioma: "Castellano",
     enlace: "https://d1fdloi71mui9q.cloudfront.net/mPaYRd7mRJ6njVWXuhDt_Fichas%20mujeres%20(2).pdf",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "bebe-mordor",
@@ -798,16 +936,20 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://bebeamordor.com/dia-de-las-ninas-y-mujeres-en-la-ciencia/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "directorio-tech",
     titulo: "Directorio de mujeres tecnólogas #WomenInTech",
     descripcion: "Directorio de mujeres tecnólogas que han hecho historia.",
     tipo: "Webs",
-    etapas: ["Bachillerato", "Adultos"],
+    etapas: ["Bachillerato"],
     disciplinas: ["Tecnología y STEAM"],
     idioma: "Castellano",
     enlace: "http://blog.loretahur.net/2017/11/directorio-de-mujeres-tecnologas-que-han-hecho-historia-womenintech.html",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "cuento-guisante",
@@ -818,6 +960,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["General"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/wp-content/uploads/2019/04/la-cientifica-y-el-guisante-11f.pdf",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "tabla-periodica",
@@ -828,6 +972,8 @@ export const MATERIALES: Material[] = [
     disciplinas: ["Física y Química"],
     idioma: "Castellano",
     enlace: "https://11defebrero.org/2018/11/28/la-tabla-periodica-de-las-cientificas/",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "csic-detectives",
@@ -839,19 +985,20 @@ export const MATERIALES: Material[] = [
     idioma: "Castellano",
     enlace: "https://www.recursosdivulgacion.csic.es/proyectos/detectives-de-crisis-climaticas-y-medioambientales",
     autor: "CSIC",
+    verificado: true,
+    verificadoEn: "2026-05-11"
   },
   {
     id: "cientificas-cine",
     titulo: "Científicas de cine — 101 películas",
     descripcion: "Estudio panorámico sobre la imagen filmica de las mujeres científicas en el cine internacional.",
     tipo: "Libros",
-    etapas: ["Bachillerato", "Adultos"],
+    etapas: ["Bachillerato"],
     disciplinas: ["Historia de la ciencia"],
     idioma: "Castellano",
     enlace: "https://publicaciones.unileon.es/cientificas-de-cine-panoramica-historica-en-101-peliculas-de-la-evolucion-de-la-imagen-filmica-de-la-mujer-de-ciencia-y-conocimiento-en-el-cine-internacional/",
     autor: "Universidad de León",
-  },
-];
+  }];
 
 export const TIPO_META: Record<Tipo, { color: string; emoji: string }> = {
   Presentaciones: { color: "primary", emoji: "📊" },

@@ -1,9 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Fuse from "fuse.js";
-import { Search, X, SlidersHorizontal, Wand2, ArrowRight } from "lucide-react";
+import { Search, X, SlidersHorizontal, Wand2, LayoutGrid, List } from "lucide-react";
 
 import {
   MATERIALES,
@@ -16,7 +16,7 @@ import {
   type Disciplina,
   type Idioma,
 } from "@/data/materiales";
-import { MaterialCard } from "@/components/MaterialCard";
+import { MaterialRow, MaterialCard } from "@/components/MaterialCard";
 import { WizardDialog } from "@/components/WizardDialog";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
@@ -27,23 +27,20 @@ const searchSchema = z.object({
   etapa: z.enum(ETAPAS).optional(),
   disciplina: z.enum(DISCIPLINAS).optional(),
   idioma: z.enum(IDIOMAS).optional(),
+  vista: fallback(z.enum(["lista", "mosaico"]), "lista").default("lista"),
 });
 
 export const Route = createFileRoute("/materiales")({
   validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [
-      { title: "Materiales 11F · Hub con filtros, búsqueda y descarga directa" },
+      { title: "Materiales · Once·F — Índice editorial del 11F" },
       {
         name: "description",
-        content:
-          "+60 recursos educativos para el 11 de febrero. Filtra por etapa, tipo, disciplina o idioma y descarga al instante.",
+        content: "Índice de +75 recursos para el 11 de febrero. Filtra por etapa, formato, disciplina o idioma. Cada enlace verificado.",
       },
-      { property: "og:title", content: "Hub de materiales 11F" },
-      {
-        property: "og:description",
-        content: "Presentaciones, vídeos, juegos, ilustraciones y más. Todo filtrable, todo a un clic.",
-      },
+      { property: "og:title", content: "Índice de materiales · Once·F" },
+      { property: "og:description", content: "Búsqueda en vivo, filtros editoriales y descarga directa." },
     ],
   }),
   component: MaterialesPage,
@@ -55,18 +52,31 @@ const fuse = new Fuse(MATERIALES, {
   ignoreLocation: true,
 });
 
+const PLACEHOLDERS = [
+  'Buscar "Marie Curie"…',
+  'Buscar "matemáticas primaria"…',
+  'Buscar "kahoot"…',
+  'Buscar "astronomía"…',
+  'Buscar "para colorear"…',
+];
+
 function MaterialesPage() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: "/materiales" });
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [phIdx, setPhIdx] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const t = setInterval(() => setPhIdx((i) => (i + 1) % PLACEHOLDERS.length), 3500);
+    return () => clearInterval(t);
+  }, []);
 
   const update = (patch: Partial<typeof search>) =>
     navigate({ search: (prev: typeof search) => ({ ...prev, ...patch }) });
 
   const filtered = useMemo(() => {
-    const base = search.q.trim()
-      ? fuse.search(search.q.trim()).map((r) => r.item)
-      : MATERIALES;
+    const base = search.q.trim() ? fuse.search(search.q.trim()).map((r) => r.item) : MATERIALES;
     return base.filter(
       (m) =>
         (!search.tipo || m.tipo === search.tipo) &&
@@ -79,120 +89,121 @@ function MaterialesPage() {
   const activeCount = [search.tipo, search.etapa, search.disciplina, search.idioma].filter(Boolean).length + (search.q ? 1 : 0);
 
   function clearAll() {
-    navigate({ search: { q: "", tipo: undefined, etapa: undefined, disciplina: undefined, idioma: undefined } });
+    navigate({ search: { q: "", vista: search.vista } });
   }
 
   const filterPanel = (
-    <FilterPanel
-      search={search}
-      onChange={update}
-      onClose={() => setMobileFiltersOpen(false)}
-    />
+    <FilterPanel search={search} onChange={update} onClose={() => setMobileOpen(false)} />
   );
 
   return (
     <>
-      {/* Hero del hub */}
-      <section className="border-b border-border bg-gradient-hero">
-        <div className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-2xl">
-              <h1 className="font-display text-3xl font-black sm:text-4xl lg:text-5xl">
-                Hub de materiales
+      {/* Cabecera editorial */}
+      <section className="rule-b">
+        <div className="container mx-auto px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+          <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
+            <div className="lg:col-span-8">
+              <p className="kicker">Sección 01 · Índice editorial</p>
+              <h1 className="mt-3 font-serif text-5xl font-medium leading-none tracking-tight sm:text-6xl">
+                Materiales <span className="italic text-muted-foreground">del</span> 11F
               </h1>
-              <p className="mt-3 text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Filtra por etapa, tipo, disciplina o idioma. Cada card descarga directo.
+              <p className="mt-4 max-w-xl text-lg text-muted-foreground prose-ed">
+                {MATERIALES.length} recursos catalogados. Pulsa <kbd className="num border border-ink/20 px-1.5">/</kbd> para buscar o usa el recomendador.
               </p>
             </div>
-            <WizardDialog
-              trigger={
-                <button className="inline-flex w-fit items-center gap-2 rounded-xl bg-foreground px-5 py-3 text-sm font-semibold text-background shadow-lg hover:opacity-90">
-                  <Wand2 className="h-4 w-4" /> Recomendador guiado <ArrowRight className="h-4 w-4" />
-                </button>
-              }
-            />
+            <div className="flex justify-start lg:col-span-4 lg:justify-end">
+              <WizardDialog
+                trigger={
+                  <button className="inline-flex items-center gap-2 bg-ink px-4 py-2.5 text-sm font-medium text-paper hover:bg-primary">
+                    <Wand2 className="h-4 w-4" /> Diseñar mi sesión
+                  </button>
+                }
+              />
+            </div>
           </div>
 
-          {/* Search bar */}
-          <div className="mt-8 flex items-center gap-3">
+          {/* Buscador */}
+          <div className="mt-8 flex items-stretch gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
+                ref={inputRef}
+                data-search
                 type="search"
                 value={search.q}
                 onChange={(e) => update({ q: e.target.value })}
-                placeholder='Busca: "Marie Curie", "matemáticas primaria", "kahoot"...'
-                className="h-12 w-full rounded-xl border border-border bg-card pl-11 pr-4 text-sm shadow-sm outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/15"
+                placeholder={PLACEHOLDERS[phIdx]}
+                className="h-11 w-full border border-ink/20 bg-paper pl-10 pr-3 font-serif text-base outline-none transition-colors focus:border-primary"
               />
             </div>
-            <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
+            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
-                <button className="inline-flex h-12 items-center gap-2 rounded-xl border border-border bg-card px-4 text-sm font-semibold shadow-sm hover:border-primary lg:hidden">
+                <button className="inline-flex h-11 items-center gap-2 border border-ink/20 px-3 text-sm font-medium hover:border-primary lg:hidden">
                   <SlidersHorizontal className="h-4 w-4" /> Filtros
-                  {activeCount > 0 && (
-                    <span className="grid h-5 w-5 place-items-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
-                      {activeCount}
-                    </span>
-                  )}
+                  {activeCount > 0 && <span className="num text-primary">({activeCount})</span>}
                 </button>
               </SheetTrigger>
               <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-sm">
-                <SheetHeader>
-                  <SheetTitle>Filtros</SheetTitle>
-                </SheetHeader>
+                <SheetHeader><SheetTitle>Filtros de redacción</SheetTitle></SheetHeader>
                 <div className="mt-6">{filterPanel}</div>
               </SheetContent>
             </Sheet>
+            <div className="hidden border border-ink/20 lg:flex">
+              <button
+                onClick={() => update({ vista: "lista" })}
+                className={cn("inline-flex h-11 w-11 items-center justify-center", search.vista === "lista" ? "bg-ink text-paper" : "hover:text-primary")}
+                title="Vista lista"
+              >
+                <List className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => update({ vista: "mosaico" })}
+                className={cn("inline-flex h-11 w-11 items-center justify-center", search.vista === "mosaico" ? "bg-ink text-paper" : "hover:text-primary")}
+                title="Vista mosaico"
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Body */}
+      {/* Cuerpo */}
       <section className="container mx-auto px-4 py-10 sm:px-6 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
+        <div className="grid gap-12 lg:grid-cols-[240px_1fr]">
           <aside className="hidden lg:block">
-            <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-2xl border border-border bg-card p-5 shadow-sm">
-              {filterPanel}
-            </div>
+            <div className="sticky top-32">{filterPanel}</div>
           </aside>
 
           <div>
-            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-              <p className="text-sm text-muted-foreground">
-                <span className="font-semibold text-foreground">{filtered.length}</span> {filtered.length === 1 ? "material" : "materiales"} encontrados
-                {activeCount > 0 && <span> · {activeCount} {activeCount === 1 ? "filtro activo" : "filtros activos"}</span>}
+            <div className="rule-b flex flex-wrap items-center justify-between gap-3 pb-3">
+              <p className="text-sm">
+                <span className="num font-serif text-2xl">{filtered.length}</span>{" "}
+                <span className="text-muted-foreground">{filtered.length === 1 ? "material" : "materiales"}</span>
+                {activeCount > 0 && <span className="text-muted-foreground"> · {activeCount} {activeCount === 1 ? "filtro" : "filtros"} activo{activeCount === 1 ? "" : "s"}</span>}
               </p>
               {activeCount > 0 && (
-                <button
-                  onClick={clearAll}
-                  className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary-soft"
-                >
-                  <X className="h-3.5 w-3.5" /> Limpiar filtros
+                <button onClick={clearAll} className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline">
+                  <X className="h-3 w-3" /> Limpiar
                 </button>
               )}
             </div>
 
-            {/* Active chips */}
+            {/* Chips activos */}
             {activeCount > 0 && (
-              <div className="mb-5 flex flex-wrap gap-2">
+              <div className="mt-4 flex flex-wrap gap-1.5">
                 {(["tipo", "etapa", "disciplina", "idioma"] as const).map((k) => {
                   const v = search[k];
                   if (!v) return null;
                   return (
-                    <button
-                      key={k}
-                      onClick={() => update({ [k]: undefined } as Partial<typeof search>)}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/20"
-                    >
+                    <button key={k} onClick={() => update({ [k]: undefined } as Partial<typeof search>)}
+                      className="inline-flex items-center gap-1 border border-primary/40 bg-primary-soft px-2 py-1 text-xs text-primary">
                       {v} <X className="h-3 w-3" />
                     </button>
                   );
                 })}
                 {search.q && (
-                  <button
-                    onClick={() => update({ q: "" })}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/20"
-                  >
+                  <button onClick={() => update({ q: "" })} className="inline-flex items-center gap-1 border border-primary/40 bg-primary-soft px-2 py-1 text-xs text-primary">
                     "{search.q}" <X className="h-3 w-3" />
                   </button>
                 )}
@@ -201,12 +212,14 @@ function MaterialesPage() {
 
             {filtered.length === 0 ? (
               <EmptyState onClear={clearAll} />
-            ) : (
-              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-                {filtered.map((m) => (
-                  <MaterialCard key={m.id} material={m} />
-                ))}
+            ) : search.vista === "mosaico" ? (
+              <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                {filtered.map((m) => <MaterialCard key={m.id} material={m} />)}
               </div>
+            ) : (
+              <ol className="mt-2">
+                {filtered.map((m, i) => <MaterialRow key={m.id} material={m} index={i + 1} />)}
+              </ol>
             )}
           </div>
         </div>
@@ -221,65 +234,29 @@ type Search = {
   etapa?: Etapa;
   disciplina?: Disciplina;
   idioma?: Idioma;
+  vista: "lista" | "mosaico";
 };
 
-function FilterPanel({
-  search,
-  onChange,
-  onClose,
-}: {
+function FilterPanel({ search, onChange, onClose }: {
   search: Search;
   onChange: (patch: Partial<Search>) => void;
   onClose?: () => void;
 }) {
   return (
-    <div className="space-y-6">
-      <FilterGroup
-        label="Etapa educativa"
-        options={ETAPAS}
-        value={search.etapa}
-        onSelect={(v) => {
-          onChange({ etapa: v });
-          onClose?.();
-        }}
-      />
-      <FilterGroup
-        label="Tipo de recurso"
-        options={TIPOS}
-        value={search.tipo}
-        onSelect={(v) => {
-          onChange({ tipo: v });
-          onClose?.();
-        }}
-      />
-      <FilterGroup
-        label="Disciplina"
-        options={DISCIPLINAS}
-        value={search.disciplina}
-        onSelect={(v) => {
-          onChange({ disciplina: v });
-          onClose?.();
-        }}
-      />
-      <FilterGroup
-        label="Idioma"
-        options={IDIOMAS}
-        value={search.idioma}
-        onSelect={(v) => {
-          onChange({ idioma: v });
-          onClose?.();
-        }}
-      />
+    <div className="space-y-7">
+      <FilterGroup label="Etapa" options={ETAPAS} value={search.etapa}
+        onSelect={(v) => { onChange({ etapa: v }); onClose?.(); }} />
+      <FilterGroup label="Formato" options={TIPOS} value={search.tipo}
+        onSelect={(v) => { onChange({ tipo: v }); onClose?.(); }} />
+      <FilterGroup label="Disciplina" options={DISCIPLINAS} value={search.disciplina}
+        onSelect={(v) => { onChange({ disciplina: v }); onClose?.(); }} />
+      <FilterGroup label="Idioma" options={IDIOMAS} value={search.idioma}
+        onSelect={(v) => { onChange({ idioma: v }); onClose?.(); }} />
     </div>
   );
 }
 
-function FilterGroup<T extends string>({
-  label,
-  options,
-  value,
-  onSelect,
-}: {
+function FilterGroup<T extends string>({ label, options, value, onSelect }: {
   label: string;
   options: readonly T[];
   value: T | undefined;
@@ -287,63 +264,37 @@ function FilterGroup<T extends string>({
 }) {
   return (
     <div>
-      <h3 className="mb-2.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-        {label}
-      </h3>
-      <div className="flex flex-wrap gap-1.5">
-        <button
-          onClick={() => onSelect(undefined)}
-          className={cn(
-            "rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
-            !value
-              ? "bg-primary text-primary-foreground shadow-sm"
-              : "bg-muted text-muted-foreground hover:bg-accent",
-          )}
-        >
-          Todos
-        </button>
-        {options.map((o) => (
-          <button
-            key={o}
-            onClick={() => onSelect(o)}
-            className={cn(
-              "rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
-              value === o
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "bg-muted text-muted-foreground hover:bg-accent",
-            )}
-          >
-            {o}
+      <p className="kicker mb-2.5">{label}</p>
+      <ul className="space-y-1">
+        <li>
+          <button onClick={() => onSelect(undefined)} className={cn("w-full text-left text-sm", !value ? "text-primary underline-hand" : "hover:text-primary")}>
+            Todos
           </button>
+        </li>
+        {options.map((o) => (
+          <li key={o}>
+            <button onClick={() => onSelect(value === o ? undefined : o)}
+              className={cn("w-full text-left text-sm", value === o ? "text-primary underline-hand" : "text-foreground hover:text-primary")}>
+              {o}
+            </button>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }
 
 function EmptyState({ onClear }: { onClear: () => void }) {
   return (
-    <div className="rounded-3xl border-2 border-dashed border-border bg-muted/30 p-10 text-center">
-      <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-primary-soft text-2xl">
-        🔍
-      </div>
-      <h3 className="mt-4 font-display text-xl font-bold">Sin resultados</h3>
-      <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-        Prueba a quitar algún filtro o usar otra palabra clave. También puedes usar el recomendador.
+    <div className="mt-8 rule-t rule-b py-16 text-center">
+      <p className="kicker">Sin resultados</p>
+      <h3 className="mt-3 font-serif text-3xl font-medium">Nada coincide con esa búsqueda.</h3>
+      <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
+        Prueba a quitar algún filtro, simplificar la palabra clave o lánzate al recomendador.
       </p>
-      <div className="mt-6 flex flex-wrap justify-center gap-2">
-        <button
-          onClick={onClear}
-          className="rounded-lg bg-foreground px-4 py-2 text-sm font-semibold text-background hover:opacity-90"
-        >
-          Limpiar filtros
-        </button>
-        <Link
-          to="/"
-          className="rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-accent"
-        >
-          Volver al inicio
-        </Link>
+      <div className="mt-6 flex justify-center gap-2">
+        <button onClick={onClear} className="bg-ink px-4 py-2 text-sm font-medium text-paper">Limpiar filtros</button>
+        <Link to="/" className="border border-ink/20 px-4 py-2 text-sm font-medium hover:border-primary">Volver al inicio</Link>
       </div>
     </div>
   );
