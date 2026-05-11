@@ -101,10 +101,10 @@ function MaterialesPage() {
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
               <h1 className="font-display text-3xl font-black sm:text-4xl lg:text-5xl">
-                Hub de materiales
+                Todo lo que necesitas para celebrar el 11F
               </h1>
-              <p className="mt-3 text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Filtra por etapa, tipo, disciplina o idioma. Cada card descarga directo.
+              <p className="mt-3 text-base leading-relaxed text-foreground/80 sm:text-lg">
+                Más de 90 recursos verificados: presentaciones, juegos, pósters y vídeos. Filtra, descarga y a clase.
               </p>
             </div>
             <WizardDialog
