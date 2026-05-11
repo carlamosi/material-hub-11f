@@ -1,4 +1,4 @@
-import { ExternalLink, Download, Link2, Copy } from "lucide-react";
+import { ExternalLink, Download, Copy } from "lucide-react";
 import { toast } from "sonner";
 import type { Material } from "@/data/materiales";
 import { TIPO_META } from "@/data/materiales";
