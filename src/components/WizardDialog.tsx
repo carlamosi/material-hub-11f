@@ -17,7 +17,7 @@ const ETAPAS_OPTS: { value: Etapa; emoji: string; desc: string }[] = [
   { value: "Primaria", emoji: "✏️", desc: "6 a 12 años" },
   { value: "ESO", emoji: "🎒", desc: "12 a 16 años" },
   { value: "Bachillerato", emoji: "🎓", desc: "16 a 18 años" },
-  { value: "Adultos", emoji: "🌍", desc: "Universidad y público" },
+  
 ];
 
 const TIPOS_OPTS: { value: Tipo | "todos"; emoji: string; label: string }[] = [
