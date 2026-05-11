@@ -164,19 +164,51 @@ function MaterialesPage() {
                 <span className="font-semibold text-foreground">{filtered.length}</span> {filtered.length === 1 ? "material" : "materiales"} encontrados
                 {activeCount > 0 && <span> · {activeCount} {activeCount === 1 ? "filtro activo" : "filtros activos"}</span>}
               </p>
-              {activeCount > 0 && (
-                <button
-                  onClick={clearAll}
-                  className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary-soft"
+              <div className="flex items-center gap-2">
+                {activeCount > 0 && (
+                  <button
+                    onClick={clearAll}
+                    className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  >
+                    <X className="h-3.5 w-3.5" aria-hidden /> Limpiar filtros
+                  </button>
+                )}
+                <div
+                  role="group"
+                  aria-label="Cambiar vista"
+                  className="inline-flex items-center rounded-lg border border-border bg-card p-0.5"
                 >
-                  <X className="h-3.5 w-3.5" /> Limpiar filtros
-                </button>
-              )}
+                  <button
+                    type="button"
+                    aria-pressed={search.vista === "grid"}
+                    aria-label="Vista en cuadrícula"
+                    onClick={() => update({ vista: "grid" })}
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                      search.vista === "grid" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <LayoutGrid className="h-3.5 w-3.5" aria-hidden /> Grid
+                  </button>
+                  <button
+                    type="button"
+                    aria-pressed={search.vista === "lista"}
+                    aria-label="Vista en lista compacta"
+                    onClick={() => update({ vista: "lista" })}
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                      search.vista === "lista" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <List className="h-3.5 w-3.5" aria-hidden /> Lista
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Active chips */}
             {activeCount > 0 && (
-              <div className="mb-5 flex flex-wrap gap-2">
+              <div className="mb-5 flex flex-wrap gap-2" role="region" aria-label="Filtros activos">
                 {(["tipo", "etapa", "disciplina", "idioma"] as const).map((k) => {
                   const v = search[k];
                   if (!v) return null;
@@ -184,18 +216,20 @@ function MaterialesPage() {
                     <button
                       key={k}
                       onClick={() => update({ [k]: undefined } as Partial<typeof search>)}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/20"
+                      aria-label={`Quitar filtro ${k}: ${v}`}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     >
-                      {v} <X className="h-3 w-3" />
+                      {v} <X className="h-3 w-3" aria-hidden />
                     </button>
                   );
                 })}
                 {search.q && (
                   <button
                     onClick={() => update({ q: "" })}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/20"
+                    aria-label={`Quitar búsqueda: ${search.q}`}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   >
-                    "{search.q}" <X className="h-3 w-3" />
+                    "{search.q}" <X className="h-3 w-3" aria-hidden />
                   </button>
                 )}
               </div>
@@ -203,10 +237,20 @@ function MaterialesPage() {
 
             {filtered.length === 0 ? (
               <EmptyState onClear={clearAll} />
-            ) : (
-              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            ) : search.vista === "lista" ? (
+              <div className="flex flex-col gap-2.5" role="list" aria-label={`${filtered.length} materiales`}>
                 {filtered.map((m) => (
-                  <MaterialCard key={m.id} material={m} />
+                  <div role="listitem" key={m.id}>
+                    <MaterialRow material={m} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3" role="list" aria-label={`${filtered.length} materiales`}>
+                {filtered.map((m) => (
+                  <div role="listitem" key={m.id}>
+                    <MaterialCard material={m} />
+                  </div>
                 ))}
               </div>
             )}
