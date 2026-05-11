@@ -163,6 +163,7 @@ function MaterialesPage() {
           </aside>
 
           <div>
+            <MaterialesIntro />
             <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
               <p className="text-sm text-muted-foreground">
                 <span className="font-semibold text-foreground">{filtered.length}</span> {filtered.length === 1 ? "material" : "materiales"} encontrados
