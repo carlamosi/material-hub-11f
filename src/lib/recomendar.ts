@@ -72,7 +72,10 @@ function score(m: Material, ctx: Contexto): number {
   if (ctx.idioma && m.idioma === ctx.idioma) s += 2;
   if (ctx.formatos.length === 0 || TIPO_FORMATO[m.tipo].some((f) => ctx.formatos.includes(f))) s += 3;
   if (ctx.intenciones.length === 0 || TIPO_INTENCION[m.tipo].some((i) => ctx.intenciones.includes(i))) s += 3;
-  if (m.verificado === false) s -= 2;
+  if (!m.enlace) s -= 6;
+  if (m.funciona === "no") s -= 8;
+  if (m.funciona === "parcial") s -= 2;
+  if (m.verificado) s += 2;
   return s;
 }
 
@@ -85,7 +88,7 @@ export interface Bloque {
 
 export function recomendarSesion(ctx: Contexto): Bloque[] {
   const candidatos = MATERIALES
-    .filter((m) => m.etapas.includes(ctx.etapa))
+    .filter((m) => m.etapas.includes(ctx.etapa) && m.funciona !== "no" && m.enlace)
     .map((m) => ({ m, s: score(m, ctx) }))
     .sort((a, b) => b.s - a.s);
 
@@ -126,7 +129,7 @@ export function sesionATexto(bloques: Bloque[], ctx: Contexto): string {
     lines.push(`  ${b.descripcion}`);
     if (b.material) {
       lines.push(`  • ${b.material.titulo} [${b.material.tipo}]`);
-      lines.push(`    ${b.material.enlace}`);
+      if (b.material.enlace) lines.push(`    ${b.material.enlace}`);
     } else {
       lines.push(`  • (Sin material asignado)`);
     }

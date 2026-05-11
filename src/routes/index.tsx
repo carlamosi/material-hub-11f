@@ -31,7 +31,7 @@ const SUMARIO = [
 
 function HomePage() {
   const total = MATERIALES.length;
-  const verificados = MATERIALES.filter((m) => m.verificado !== false).length;
+  const verificados = MATERIALES.filter((m) => m.verificado).length;
 
   return (
     <>
