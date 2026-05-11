@@ -3,7 +3,7 @@ import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useMemo, useState } from "react";
 import Fuse from "fuse.js";
-import { Search, X, SlidersHorizontal, Wand2, ArrowRight } from "lucide-react";
+import { Search, X, SlidersHorizontal, Wand2, ArrowRight, LayoutGrid, List } from "lucide-react";
 
 import {
   MATERIALES,
@@ -17,6 +17,7 @@ import {
   type Idioma,
 } from "@/data/materiales";
 import { MaterialCard } from "@/components/MaterialCard";
+import { MaterialRow } from "@/components/MaterialRow";
 import { WizardDialog } from "@/components/WizardDialog";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
@@ -27,6 +28,7 @@ const searchSchema = z.object({
   etapa: z.enum(ETAPAS).optional(),
   disciplina: z.enum(DISCIPLINAS).optional(),
   idioma: z.enum(IDIOMAS).optional(),
+  vista: fallback(z.enum(["grid", "lista"]), "grid").default("grid"),
 });
 
 export const Route = createFileRoute("/materiales")({
