@@ -49,9 +49,7 @@ export function MaterialCard({ material }: { material: Material }) {
         <h3 className="font-display text-base font-bold leading-snug text-foreground">
           {material.titulo}
         </h3>
-        {material.autor && (
-          <p className="mt-1 text-xs text-muted-foreground">por {material.autor}</p>
-        )}
+        {/* autor opcional */}
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground line-clamp-3">
           {material.descripcion}
         </p>
