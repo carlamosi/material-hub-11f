@@ -3,7 +3,7 @@ import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import { useMemo, useState } from "react";
 import Fuse from "fuse.js";
-import { Search, X, SlidersHorizontal, Wand2, ArrowRight } from "lucide-react";
+import { Search, X, SlidersHorizontal, Wand2, ArrowRight, LayoutGrid, List } from "lucide-react";
 
 import {
   MATERIALES,
@@ -17,6 +17,7 @@ import {
   type Idioma,
 } from "@/data/materiales";
 import { MaterialCard } from "@/components/MaterialCard";
+import { MaterialRow } from "@/components/MaterialRow";
 import { WizardDialog } from "@/components/WizardDialog";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
@@ -27,6 +28,7 @@ const searchSchema = z.object({
   etapa: z.enum(ETAPAS).optional(),
   disciplina: z.enum(DISCIPLINAS).optional(),
   idioma: z.enum(IDIOMAS).optional(),
+  vista: fallback(z.enum(["grid", "lista"]), "grid").default("grid"),
 });
 
 export const Route = createFileRoute("/materiales")({
@@ -116,12 +118,15 @@ function MaterialesPage() {
           {/* Search bar */}
           <div className="mt-8 flex items-center gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <label htmlFor="materiales-search" className="sr-only">Buscar materiales</label>
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
               <input
+                id="materiales-search"
+                data-search
                 type="search"
                 value={search.q}
                 onChange={(e) => update({ q: e.target.value })}
-                placeholder='Busca: "Marie Curie", "matemáticas primaria", "kahoot"...'
+                placeholder='Busca por nombre, disciplina o personaje…  ( / )'
                 className="h-12 w-full rounded-xl border border-border bg-card pl-11 pr-4 text-sm shadow-sm outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/15"
               />
             </div>
@@ -162,19 +167,51 @@ function MaterialesPage() {
                 <span className="font-semibold text-foreground">{filtered.length}</span> {filtered.length === 1 ? "material" : "materiales"} encontrados
                 {activeCount > 0 && <span> · {activeCount} {activeCount === 1 ? "filtro activo" : "filtros activos"}</span>}
               </p>
-              {activeCount > 0 && (
-                <button
-                  onClick={clearAll}
-                  className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary-soft"
+              <div className="flex items-center gap-2">
+                {activeCount > 0 && (
+                  <button
+                    onClick={clearAll}
+                    className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  >
+                    <X className="h-3.5 w-3.5" aria-hidden /> Limpiar filtros
+                  </button>
+                )}
+                <div
+                  role="group"
+                  aria-label="Cambiar vista"
+                  className="inline-flex items-center rounded-lg border border-border bg-card p-0.5"
                 >
-                  <X className="h-3.5 w-3.5" /> Limpiar filtros
-                </button>
-              )}
+                  <button
+                    type="button"
+                    aria-pressed={search.vista === "grid"}
+                    aria-label="Vista en cuadrícula"
+                    onClick={() => update({ vista: "grid" })}
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                      search.vista === "grid" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <LayoutGrid className="h-3.5 w-3.5" aria-hidden /> Grid
+                  </button>
+                  <button
+                    type="button"
+                    aria-pressed={search.vista === "lista"}
+                    aria-label="Vista en lista compacta"
+                    onClick={() => update({ vista: "lista" })}
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                      search.vista === "lista" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <List className="h-3.5 w-3.5" aria-hidden /> Lista
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Active chips */}
             {activeCount > 0 && (
-              <div className="mb-5 flex flex-wrap gap-2">
+              <div className="mb-5 flex flex-wrap gap-2" role="region" aria-label="Filtros activos">
                 {(["tipo", "etapa", "disciplina", "idioma"] as const).map((k) => {
                   const v = search[k];
                   if (!v) return null;
@@ -182,18 +219,20 @@ function MaterialesPage() {
                     <button
                       key={k}
                       onClick={() => update({ [k]: undefined } as Partial<typeof search>)}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/20"
+                      aria-label={`Quitar filtro ${k}: ${v}`}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     >
-                      {v} <X className="h-3 w-3" />
+                      {v} <X className="h-3 w-3" aria-hidden />
                     </button>
                   );
                 })}
                 {search.q && (
                   <button
                     onClick={() => update({ q: "" })}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/20"
+                    aria-label={`Quitar búsqueda: ${search.q}`}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   >
-                    "{search.q}" <X className="h-3 w-3" />
+                    "{search.q}" <X className="h-3 w-3" aria-hidden />
                   </button>
                 )}
               </div>
@@ -201,10 +240,20 @@ function MaterialesPage() {
 
             {filtered.length === 0 ? (
               <EmptyState onClear={clearAll} />
-            ) : (
-              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            ) : search.vista === "lista" ? (
+              <div className="flex flex-col gap-2.5" role="list" aria-label={`${filtered.length} materiales`}>
                 {filtered.map((m) => (
-                  <MaterialCard key={m.id} material={m} />
+                  <div role="listitem" key={m.id}>
+                    <MaterialRow material={m} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3" role="list" aria-label={`${filtered.length} materiales`}>
+                {filtered.map((m) => (
+                  <div role="listitem" key={m.id}>
+                    <MaterialCard material={m} />
+                  </div>
                 ))}
               </div>
             )}
@@ -285,19 +334,22 @@ function FilterGroup<T extends string>({
   value: T | undefined;
   onSelect: (v: T | undefined) => void;
 }) {
+  const groupId = `filter-${label.replace(/\s+/g, "-").toLowerCase()}`;
   return (
     <div>
-      <h3 className="mb-2.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+      <h3 id={groupId} className="mb-2.5 text-xs font-bold uppercase tracking-wider text-foreground/70">
         {label}
       </h3>
-      <div className="flex flex-wrap gap-1.5">
+      <div role="group" aria-labelledby={groupId} className="flex flex-wrap gap-1.5">
         <button
+          type="button"
+          aria-pressed={!value}
           onClick={() => onSelect(undefined)}
           className={cn(
-            "rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
+            "rounded-full px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
             !value
               ? "bg-primary text-primary-foreground shadow-sm"
-              : "bg-muted text-muted-foreground hover:bg-accent",
+              : "bg-muted text-foreground/80 hover:bg-accent hover:text-foreground",
           )}
         >
           Todos
@@ -305,12 +357,14 @@ function FilterGroup<T extends string>({
         {options.map((o) => (
           <button
             key={o}
+            type="button"
+            aria-pressed={value === o}
             onClick={() => onSelect(o)}
             className={cn(
-              "rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
+              "rounded-full px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
               value === o
                 ? "bg-primary text-primary-foreground shadow-sm"
-                : "bg-muted text-muted-foreground hover:bg-accent",
+                : "bg-muted text-foreground/80 hover:bg-accent hover:text-foreground",
             )}
           >
             {o}
