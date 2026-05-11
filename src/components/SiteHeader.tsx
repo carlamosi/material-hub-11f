@@ -1,7 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Sparkles, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import logo11F from "@/assets/11f-logo.png";
 
 type NavItem = { to: "/" | "/materiales" | "/sobre-el-11f" | "/contacto"; label: string; exact?: boolean };
 const NAV: readonly NavItem[] = [
