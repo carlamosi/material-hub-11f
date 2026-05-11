@@ -1,116 +1,92 @@
-import { ExternalLink, Download, BadgeCheck, AlertCircle, Link2Off } from "lucide-react";
+import { ExternalLink, Download, Link2 } from "lucide-react";
 import type { Material } from "@/data/materiales";
+import { TIPO_META } from "@/data/materiales";
 import { cn } from "@/lib/utils";
 
-function isPdf(url: string) { return /\.pdf($|\?)/i.test(url); }
-function isVideo(url: string) { return /youtube|youtu\.be|vimeo/i.test(url); }
-function ctaLabel(url: string) {
-  if (isPdf(url)) return "Descargar";
-  if (isVideo(url)) return "Ver";
-  return "Abrir";
-}
+const colorClasses: Record<string, string> = {
+  primary: "bg-primary-soft text-primary",
+  coral: "bg-coral/15 text-coral",
+  violet: "bg-violet/15 text-violet",
+  amber: "bg-amber/20 text-amber-foreground",
+};
 
-function StatusBadge({ material }: { material: Material }) {
-  if (!material.enlace) {
-    return (
-      <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground" title="Material citado en el catálogo sin enlace público disponible">
-        <Link2Off className="h-3 w-3" /> Sin enlace público
-      </span>
-    );
-  }
-  if (material.funciona === "no") {
-    return (
-      <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-destructive">
-        <AlertCircle className="h-3 w-3" /> Enlace caído
-      </span>
-    );
-  }
-  if (material.funciona === "parcial") {
-    return (
-      <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-amber-700" title={material.nota || "El enlace funciona parcialmente o lleva a una página relacionada"}>
-        <AlertCircle className="h-3 w-3" /> Enlace parcial
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-wider text-primary" title={`Comprobado el ${material.verificadoEn}`}>
-      <BadgeCheck className="h-3 w-3" /> Verificado
-    </span>
-  );
-}
+const iconBg: Record<string, string> = {
+  primary: "bg-gradient-to-br from-primary to-primary-glow text-primary-foreground",
+  coral: "bg-gradient-to-br from-coral to-amber text-coral-foreground",
+  violet: "bg-gradient-to-br from-violet to-primary text-violet-foreground",
+  amber: "bg-gradient-to-br from-amber to-coral text-amber-foreground",
+};
 
-function CTA({ material }: { material: Material }) {
-  if (!material.enlace) {
-    return (
-      <span className="inline-flex items-center gap-1.5 self-center whitespace-nowrap border border-ink/10 px-3 py-1.5 text-xs italic text-muted-foreground">
-        sin enlace
-      </span>
-    );
-  }
-  const Icon = isPdf(material.enlace) ? Download : ExternalLink;
-  return (
-    <a
-      href={material.enlace}
-      target="_blank"
-      rel="noreferrer"
-      className="inline-flex items-center gap-1.5 self-center whitespace-nowrap border border-ink/20 px-3 py-1.5 text-xs font-medium hover:border-primary hover:text-primary"
-    >
-      {ctaLabel(material.enlace)} <Icon className="h-3.5 w-3.5 arrow-pop" />
-    </a>
-  );
-}
-
-function TitleLink({ material, className }: { material: Material; className?: string }) {
-  if (!material.enlace) return <span className={className}>{material.titulo}</span>;
-  return (
-    <a href={material.enlace} target="_blank" rel="noreferrer" className={cn("link-ed", className)}>
-      {material.titulo}
-    </a>
-  );
-}
-
-export function MaterialRow({ material, index }: { material: Material; index: number }) {
-  return (
-    <article className="group rule-b grid grid-cols-[auto_1fr_auto] items-baseline gap-x-5 gap-y-1 py-5 transition-colors hover:bg-primary-soft/30">
-      <span className="num-badge num text-xl tabular-nums">{String(index).padStart(2, "0")}</span>
-      <div className="min-w-0">
-        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <h3 className="font-serif text-xl font-medium leading-tight tracking-tight">
-            <TitleLink material={material} />
-          </h3>
-          <StatusBadge material={material} />
-        </div>
-        <p className="mt-1 text-sm text-muted-foreground prose-ed">{material.descripcion}</p>
-        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-          <span className="kicker !text-[10px] !text-foreground">{material.tipo}</span>
-          <span aria-hidden>·</span>
-          <span>{material.etapas.join(", ")}</span>
-          <span aria-hidden>·</span>
-          <span>{material.disciplinas.join(", ")}</span>
-          <span aria-hidden>·</span>
-          <span>{material.idioma}</span>
-        </div>
-      </div>
-      <CTA material={material} />
-    </article>
-  );
+function isPdf(url: string) {
+  return /\.pdf($|\?)/i.test(url);
 }
 
 export function MaterialCard({ material }: { material: Material }) {
+  const meta = TIPO_META[material.tipo];
+  const enlace = material.enlace ?? "";
+  const hasLink = Boolean(material.enlace);
+  const ctaLabel = !hasLink
+    ? "Sin enlace público"
+    : isPdf(enlace)
+      ? "Descargar PDF"
+      : enlace.includes("youtube") || enlace.includes("youtu.be")
+        ? "Ver vídeo"
+        : "Abrir recurso";
+  const CtaIcon = isPdf(enlace) ? Download : ExternalLink;
+
   return (
-    <article className={cn("group flex flex-col border border-ink/15 bg-card p-5 transition-colors hover:border-primary")}>
-      <p className="kicker mb-2">{material.tipo}</p>
-      <h3 className="font-serif text-lg font-medium leading-snug">
-        <TitleLink material={material} />
-      </h3>
-      <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{material.descripcion}</p>
-      <div className="mt-3 flex flex-wrap gap-1 text-[11px] text-muted-foreground">
-        {material.etapas.map((e) => (<span key={e} className="border border-ink/15 px-1.5">{e}</span>))}
-        <span className="border border-primary/40 px-1.5 text-primary">{material.idioma}</span>
+    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-glow">
+      <div className="relative flex items-center justify-between gap-3 border-b border-border/60 bg-gradient-soft p-5">
+        <div className={cn("grid h-12 w-12 place-items-center rounded-xl text-2xl shadow-md", iconBg[meta.color])}>
+          <span aria-hidden>{meta.emoji}</span>
+        </div>
+        <span className={cn("rounded-full px-3 py-1 text-xs font-semibold", colorClasses[meta.color])}>
+          {material.tipo}
+        </span>
       </div>
-      <div className="mt-auto flex items-center justify-between pt-4">
-        <StatusBadge material={material} />
-        <CTA material={material} />
+
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="font-display text-base font-bold leading-snug text-foreground">
+          {material.titulo}
+        </h3>
+        {/* autor opcional */}
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground line-clamp-3">
+          {material.descripcion}
+        </p>
+
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {material.etapas.slice(0, 3).map((e) => (
+            <span key={e} className="rounded-md bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+              {e}
+            </span>
+          ))}
+          {material.etapas.length > 3 && (
+            <span className="rounded-md bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+              +{material.etapas.length - 3}
+            </span>
+          )}
+          <span className="rounded-md bg-primary-soft px-2 py-0.5 text-[11px] font-medium text-primary">
+            {material.idioma}
+          </span>
+        </div>
+
+        <div className="mt-5 flex items-center gap-2">
+          {hasLink ? (
+            <a
+              href={enlace}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-foreground px-3.5 py-2.5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
+            >
+              <CtaIcon className="h-4 w-4" />
+              {ctaLabel}
+            </a>
+          ) : (
+            <span className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-dashed border-border px-3.5 py-2.5 text-sm font-medium text-muted-foreground">
+              {ctaLabel}
+            </span>
+          )}
+        </div>
       </div>
     </article>
   );
