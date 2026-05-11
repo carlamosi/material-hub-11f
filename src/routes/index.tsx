@@ -1,200 +1,165 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Filter, Search, Wand2, Download, Sparkles, GraduationCap, Baby, BookOpen } from "lucide-react";
-import heroImg from "@/assets/hero-mujeres-ciencia.jpg";
+import { ArrowRight, Wand2 } from "lucide-react";
 import { WizardDialog } from "@/components/WizardDialog";
-import { MATERIALES } from "@/data/materiales";
+import { CitaDelDia } from "@/components/CitaDelDia";
+import { MATERIALES, TIPOS } from "@/data/materiales";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "11F·Hub — Materiales para el Día de la Mujer y la Niña en la Ciencia" },
+      { title: "Once·F — Edición 2027 · Materiales para el 11F" },
       {
         name: "description",
         content:
-          "Hub unificado con presentaciones, vídeos, juegos e ilustraciones para el 11 de febrero. Filtros instantáneos por etapa educativa, tipo e idioma.",
+          "La edición editorial del 11 de febrero: presentaciones, juegos, vídeos, ilustraciones y un recomendador que monta tu sesión didáctica en 30 segundos.",
       },
-      { property: "og:title", content: "11F·Hub — Encuentra tu material en segundos" },
+      { property: "og:title", content: "Once·F — La edición especial del 11F" },
       {
         property: "og:description",
-        content: "+60 recursos abiertos para celebrar el Día Internacional de la Mujer y la Niña en la Ciencia.",
+        content: "Recursos verificados y un recomendador que diseña tu sesión.",
       },
     ],
   }),
   component: HomePage,
 });
 
-const FEATURES = [
-  {
-    icon: Filter,
-    title: "Filtros en tiempo real",
-    desc: "Etapa, tipo, idioma y disciplina. Resultados instantáneos sin recargar.",
-  },
-  {
-    icon: Search,
-    title: "Buscador inteligente",
-    desc: '"Marie Curie", "microbiología primaria"... encuentra por palabras clave.',
-  },
-  {
-    icon: Download,
-    title: "Descarga directa",
-    desc: "Sin pasos intermedios. Un clic y el recurso está abierto.",
-  },
-  {
-    icon: Wand2,
-    title: "Recomendador guiado",
-    desc: "Wizard de 2 pasos para docentes que llegan sin saber por dónde empezar.",
-  },
+const SUMARIO = [
+  { num: "01", title: "Materiales", desc: "Índice editorial con búsqueda y filtros en vivo.", to: "/materiales" as const },
+  { num: "02", title: "Sobre el 11F", desc: "Por qué importa, a quién va dirigido, cómo aprovecharlo.", to: "/sobre-el-11f" as const },
+  { num: "03", title: "Contacto", desc: "Sugiere recursos, reporta enlaces, colabora con la edición.", to: "/contacto" as const },
 ];
-
-const SHORTCUTS = [
-  { etapa: "Infantil", emoji: "🧸", icon: Baby, count: MATERIALES.filter((m) => m.etapas.includes("Infantil")).length },
-  { etapa: "Primaria", emoji: "✏️", icon: BookOpen, count: MATERIALES.filter((m) => m.etapas.includes("Primaria")).length },
-  { etapa: "ESO", emoji: "🎒", icon: GraduationCap, count: MATERIALES.filter((m) => m.etapas.includes("ESO")).length },
-  { etapa: "Bachillerato", emoji: "🎓", icon: Sparkles, count: MATERIALES.filter((m) => m.etapas.includes("Bachillerato")).length },
-] as const;
 
 function HomePage() {
   const total = MATERIALES.length;
+  const verificados = MATERIALES.filter((m) => m.verificado !== false).length;
 
   return (
     <>
-      {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-hero">
-        <div className="absolute inset-0 -z-10 opacity-50 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]">
-          <div className="absolute -left-32 top-20 h-96 w-96 rounded-full bg-primary/30 blur-3xl" />
-          <div className="absolute right-0 top-40 h-80 w-80 rounded-full bg-violet/20 blur-3xl" />
-          <div className="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-coral/20 blur-3xl" />
-        </div>
-
-        <div className="container mx-auto grid gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:gap-8 lg:px-8 lg:py-24">
-          <div className="flex flex-col justify-center">
-            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/30 bg-primary-soft px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
-              <Sparkles className="h-3.5 w-3.5" /> 11 de febrero · Día de la Mujer y la Niña en la Ciencia
-            </span>
-            <h1 className="mt-5 font-display text-balance text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
-              Todos los materiales del 11F.
-              <br />
-              <span className="bg-gradient-to-r from-primary via-violet to-coral bg-clip-text text-transparent">
-                Un solo lugar.
-              </span>
+      {/* PORTADA */}
+      <section className="rule-b">
+        <div className="container mx-auto grid gap-10 px-4 py-12 sm:px-6 lg:grid-cols-12 lg:gap-16 lg:px-8 lg:py-20">
+          <div className="lg:col-span-8">
+            <div className="flex items-baseline justify-between gap-4">
+              <p className="kicker">Nº 11 · Edición Febrero 2027</p>
+              <p className="kicker hidden sm:block">Edición especial 11F</p>
+            </div>
+            <h1 className="mt-6 font-serif text-[clamp(2.5rem,7vw,5.5rem)] font-medium leading-[0.95] tracking-tight text-balance">
+              Una edición especial para celebrar a las{" "}
+              <span className="underline-hand italic">mujeres y niñas</span> en la ciencia.
             </h1>
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              {total}+ presentaciones, vídeos, juegos, ilustraciones y exposiciones para celebrar el día. Filtra por etapa, idioma o tipo y descarga en un clic.
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground prose-ed">
+              {total} recursos curados desde 2017 — presentaciones, juegos, vídeos, ilustraciones, exposiciones — reunidos en una sola edición editorial. Cada enlace, comprobado a mano.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
                 to="/materiales"
-                className="group inline-flex items-center gap-2 rounded-xl bg-foreground px-6 py-3.5 text-sm font-semibold text-background shadow-lg transition-all hover:scale-105"
+                className="group inline-flex items-center gap-2 bg-ink px-5 py-3 text-sm font-medium text-paper transition-colors hover:bg-primary"
               >
-                Explorar los {total} materiales
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                Hojear los {total} materiales
+                <ArrowRight className="h-4 w-4 arrow-pop" />
               </Link>
-              <WizardDialog />
-            </div>
-
-            <div className="mt-10 grid grid-cols-3 gap-6 border-t border-border/60 pt-6">
-              <div>
-                <p className="font-display text-2xl font-bold text-primary">{total}+</p>
-                <p className="text-xs text-muted-foreground">recursos</p>
-              </div>
-              <div>
-                <p className="font-display text-2xl font-bold text-primary">14</p>
-                <p className="text-xs text-muted-foreground">tipos distintos</p>
-              </div>
-              <div>
-                <p className="font-display text-2xl font-bold text-primary">5</p>
-                <p className="text-xs text-muted-foreground">etapas educativas</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="relative flex items-center justify-center">
-            <div className="relative w-full max-w-xl">
-              <div className="absolute -inset-4 rounded-3xl bg-gradient-primary opacity-20 blur-2xl" />
-              <img
-                src={heroImg}
-                alt="Ilustración de mujeres científicas trabajando con telescopio, microscopio, pizarra y matraces"
-                width={1536}
-                height={1024}
-                className="relative w-full rounded-3xl border border-border/60 bg-card shadow-glow"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SHORTCUTS */}
-      <section className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mb-8 text-center">
-          <h2 className="font-display text-3xl font-bold sm:text-4xl">Empieza por tu etapa</h2>
-          <p className="mt-2 text-muted-foreground">Atajos directos al material adecuado para tu aula.</p>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {SHORTCUTS.map((s) => (
-            <Link
-              key={s.etapa}
-              to="/materiales"
-              search={{ etapa: s.etapa }}
-              className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-glow"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-4xl">{s.emoji}</span>
-                <span className="text-xs font-semibold text-muted-foreground">{s.count} recursos</span>
-              </div>
-              <h3 className="mt-4 font-display text-lg font-bold">{s.etapa}</h3>
-              <p className="mt-1 inline-flex items-center gap-1 text-sm text-primary opacity-0 transition-opacity group-hover:opacity-100">
-                Ver materiales <ArrowRight className="h-3.5 w-3.5" />
-              </p>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* FEATURES */}
-      <section className="bg-muted/40">
-        <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
-          <div className="mb-10 max-w-2xl">
-            <h2 className="font-display text-3xl font-bold sm:text-4xl">Diseñado para encontrar, no para perderse</h2>
-            <p className="mt-3 text-muted-foreground">
-              Adiós al "haz clic en la imagen, busca el botón rosa escondido en Drive". Aquí cada material se descarga de un clic.
-            </p>
-          </div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {FEATURES.map((f) => (
-              <div key={f.title} className="rounded-2xl border border-border bg-card p-6 shadow-sm transition-shadow hover:shadow-card">
-                <div className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow">
-                  <f.icon className="h-5 w-5" />
-                </div>
-                <h3 className="mt-4 font-display text-base font-bold">{f.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-primary p-10 text-center text-primary-foreground shadow-glow sm:p-16">
-          <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_20%_30%,white,transparent_40%),radial-gradient(circle_at_80%_70%,white,transparent_40%)]" />
-          <div className="relative">
-            <h2 className="font-display text-3xl font-bold sm:text-4xl">¿No sabes por dónde empezar?</h2>
-            <p className="mx-auto mt-3 max-w-xl text-sm opacity-90 sm:text-base">
-              Responde dos preguntas y te llevamos al material exacto que necesitas para tu aula.
-            </p>
-            <div className="mt-6 inline-block">
               <WizardDialog
                 trigger={
-                  <button className="inline-flex items-center gap-2 rounded-xl bg-background px-6 py-3.5 text-sm font-semibold text-foreground shadow-lg transition-transform hover:scale-105">
-                    <Wand2 className="h-4 w-4 text-primary" /> Abrir el recomendador
+                  <button className="inline-flex items-center gap-2 border border-ink/30 px-5 py-3 text-sm font-medium hover:border-primary hover:text-primary">
+                    <Wand2 className="h-4 w-4" /> Diseñar mi sesión
                   </button>
                 }
               />
+              <span className="hidden text-xs text-muted-foreground sm:inline">
+                pulsa <kbd className="num border border-ink/20 px-1.5 py-0.5">r</kbd> en cualquier momento
+              </span>
             </div>
           </div>
+
+          {/* Sumario lateral tipo revista */}
+          <aside className="lg:col-span-4">
+            <div className="rule-t rule-b py-6">
+              <p className="kicker">Sumario</p>
+              <ol className="mt-4 space-y-4">
+                {SUMARIO.map((s) => (
+                  <li key={s.num}>
+                    <Link to={s.to} className="group grid grid-cols-[auto_1fr] gap-3">
+                      <span className="num-badge num text-sm">{s.num}</span>
+                      <div>
+                        <h3 className="font-serif text-lg font-medium leading-tight">
+                          <span className="link-ed">{s.title}</span>
+                        </h3>
+                        <p className="mt-0.5 text-xs text-muted-foreground">{s.desc}</p>
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+            </div>
+
+            <div className="mt-6 grid grid-cols-3 gap-4 text-center">
+              <Stat n={total} label="recursos" />
+              <Stat n={verificados} label="verificados" />
+              <Stat n={TIPOS.length} label="formatos" />
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      {/* CITA DEL DÍA */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <CitaDelDia />
+      </section>
+
+      {/* CÓMO HOJEAR */}
+      <section className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
+        <div className="grid gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <p className="kicker">Cómo hojear esta edición</p>
+            <h2 className="mt-3 font-serif text-4xl font-medium leading-tight">
+              Tres caminos para empezar.
+            </h2>
+          </div>
+          <ol className="lg:col-span-8 space-y-6">
+            <Path
+              num="01"
+              title="Sé qué quiero hacer."
+              body="Abre el recomendador y responde tres preguntas: te entregamos una secuencia didáctica completa (calentamiento + actividad central + cierre) imprimible y compartible."
+              cta={<WizardDialog trigger={<button className="link-ed">Abrir recomendador →</button>} />}
+            />
+            <Path
+              num="02"
+              title="Quiero curiosear."
+              body="Recorre el índice editorial con filtros por etapa, formato, disciplina e idioma. Cada material lleva sello de verificado y abre con un solo clic."
+              cta={<Link to="/materiales" className="link-ed">Ir al índice →</Link>}
+            />
+            <Path
+              num="03"
+              title="Tengo prisa."
+              body={<>Pulsa <kbd className="num border border-ink/20 px-1.5">/</kbd> y busca por palabras clave: <em>"Marie Curie"</em>, <em>"matemáticas primaria"</em>, <em>"kahoot"</em>.</>}
+              cta={<Link to="/materiales" className="link-ed">Probar buscador →</Link>}
+            />
+          </ol>
         </div>
       </section>
     </>
+  );
+}
+
+function Stat({ n, label }: { n: number; label: string }) {
+  return (
+    <div className="rule-t pt-3">
+      <p className="font-serif text-3xl font-medium num-badge">{n}</p>
+      <p className="mt-1 text-[11px] uppercase tracking-wider text-muted-foreground">{label}</p>
+    </div>
+  );
+}
+
+function Path({ num, title, body, cta }: { num: string; title: string; body: React.ReactNode; cta: React.ReactNode }) {
+  return (
+    <li className="rule-b grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 pb-6">
+      <span className="num-badge num text-2xl">{num}</span>
+      <div>
+        <h3 className="font-serif text-2xl font-medium leading-tight">{title}</h3>
+        <p className="mt-2 text-base text-muted-foreground prose-ed">{body}</p>
+        <p className="mt-3 text-sm">{cta}</p>
+      </div>
+    </li>
   );
 }
