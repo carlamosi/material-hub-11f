@@ -18,6 +18,7 @@ import {
 } from "@/data/materiales";
 import { MaterialCard } from "@/components/MaterialCard";
 import { MaterialRow } from "@/components/MaterialRow";
+import { MaterialesIntro } from "@/components/MaterialesIntro";
 import { WizardDialog } from "@/components/WizardDialog";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
