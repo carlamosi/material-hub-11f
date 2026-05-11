@@ -73,25 +73,20 @@ export function MaterialCard({ material }: { material: Material }) {
         </div>
 
         <div className="mt-5 flex items-center gap-2">
-          <a
-            href={material.enlace}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-foreground px-3.5 py-2.5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
-          >
-            <CtaIcon className="h-4 w-4" />
-            {ctaLabel}
-          </a>
-          {material.enlaceFuente && (
+          {hasLink ? (
             <a
-              href={material.enlaceFuente}
+              href={enlace}
               target="_blank"
               rel="noopener noreferrer"
-              title="Ver fuente oficial"
-              className="grid h-10 w-10 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+              className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-foreground px-3.5 py-2.5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
             >
-              <Link2 className="h-4 w-4" />
+              <CtaIcon className="h-4 w-4" />
+              {ctaLabel}
             </a>
+          ) : (
+            <span className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-dashed border-border px-3.5 py-2.5 text-sm font-medium text-muted-foreground">
+              {ctaLabel}
+            </span>
           )}
         </div>
       </div>
