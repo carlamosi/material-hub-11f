@@ -67,25 +67,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "11F · Hub Materiales" },
+      { title: "11F·Hub — Materiales para el Día de la Mujer y la Niña en la Ciencia" },
       {
         name: "description",
         content:
           "Hub abierto con +60 recursos para celebrar el 11F: presentaciones, vídeos, juegos, ilustraciones y más, con filtros por etapa, idioma y tipo.",
       },
-      { property: "og:title", content: "11F · Hub Materiales" },
+      { property: "og:title", content: "11F·Hub — Materiales para el 11 de febrero" },
       {
         property: "og:description",
         content: "Encuentra en segundos el material perfecto para tu aula del Día Internacional de la Mujer y la Niña en la Ciencia.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "11F · Hub Materiales" },
-      { name: "description", content: "11F Materials Hub is a unified platform for educational resources with real-time filtering." },
-      { property: "og:description", content: "11F Materials Hub is a unified platform for educational resources with real-time filtering." },
-      { name: "twitter:description", content: "11F Materials Hub is a unified platform for educational resources with real-time filtering." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b3d32399-e778-4d49-b617-42f6c7d4c77b/id-preview-96ab055d--caf178c3-007d-4e37-a1f5-eaada1ebc9e7.lovable.app-1778507945503.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b3d32399-e778-4d49-b617-42f6c7d4c77b/id-preview-96ab055d--caf178c3-007d-4e37-a1f5-eaada1ebc9e7.lovable.app-1778507945503.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
