@@ -1,149 +1,96 @@
-# Hub de materiales 11F — Día Internacional de la Mujer y la Niña en la Ciencia
+## Objetivo
 
-Una sola web, en castellano, color identitario `#00B4BC`, donde docentes y curiosos encuentran cualquier material en menos de 10 segundos. Sustituye la actual maraña de subpáginas por un hub único con filtros, buscador y wizard.
+Convertir el hub del 11F en una pieza con carácter editorial-científico (lejos del look "IA genérica"), con datos verificados y un recomendador que pase de wizard a generador de sesión didáctica.
 
-## Arquitectura de páginas
+---
 
-Pocas rutas, todo gira alrededor del hub:
+## 1. Limpieza de datos
 
-- `/` — **Landing**: hero potente con frase fuerza, CTA "Explorar materiales", contador (ej. "+150 recursos"), 3 atajos visuales (Infantil / Primaria / Secundaria) y wizard "¿Qué busco?".
-- `/materiales` — **Hub unificado** con filtros, buscador y grid de cards (corazón del proyecto).
-- `/sobre-el-11f` — Qué es el 11F, por qué importa, cómo usar los materiales en el aula.
-- `/contacto` — Email + enlace a redes oficiales.
+- **Eliminar la etapa "Adultos"** del tipo `Etapa`, de los filtros y de cada material que la incluya (sustituir `all` por `["Infantil","Primaria","ESO","Bachillerato"]`).
+- **Reabrir el Excel original** (te pediré que lo re-subas al implementar) y, en paralelo, lanzar una **auditoría HTTP** con script Node sobre los ~76 enlaces actuales:
+  - 200 → enlace válido, se mantiene.
+  - 3xx → seguir redirección y actualizar al destino final.
+  - 404/timeout → marcar `enlace: null` y mostrar el material como "enlace no disponible" (sin botón de descarga, badge gris).
+- Reconciliar URLs: para cada fila del Excel, comparar con `materiales.ts` y reemplazar la URL si difiere. Materiales que no estén en el Excel quedan marcados `fuente: "curado"`.
 
-Cada ruta con su propio `head()` (title, description, og:*) — separadas para SEO real.
+## 2. Dirección visual: "Editorial científico"
 
-## Categorías propuestas (ampliando el Excel)
+Inspiración: revistas tipo *Nautilus*, *Scientific American*, cuadernos de Marie Curie.
 
-El Excel agrupa por TIPO de forma irregular. Reorganizamos con dos taxonomías cruzadas que se filtran de forma independiente:
+**Tipografía** (Google Fonts, dos familias):
 
-**Tipo de recurso** (badge principal en card):
+- Titulares: **Fraunces** (serif con carácter, opsz variable) en pesos 400/600, con `font-optical-sizing: auto`.
+- Cuerpo y UI: **Inter Tight** 400/500.
+- Detalles editoriales: números en versalitas, kicker en mayúsculas tracking ancho.
 
-- Presentaciones (PPT)
-- Vídeos
-- Juegos y dinámicas
-- Ilustraciones y para colorear
-- Pósters
-- Cómics y viñetas
-- Exposiciones
-- Calendarios
-- Libros y lecturas
-- Pegatinas y marcapáginas
-- Fichas didácticas
-- Kahoots y quizzes
+**Retícula**:
 
-**Etapa educativa**:
+- Hero asimétrico tipo portada de revista: bloque de texto a la izquierda con kicker "Nº 11 · Febrero", titular serif gigante con un tachado/subrayado a mano sobre la palabra clave, columna lateral con "Sumario" estilo índice de revista linkando a las secciones.
+- Listados con líneas finas separadoras (`border-b border-foreground/10`), no cards con sombras.
+- Mucho espacio en blanco; columnas de texto con `max-width: 65ch`.
 
-- Infantil (3-6)
-- Primaria (6-12)
-- ESO (12-16)
-- Bachillerato (16-18)
-- Todas las edades
+**Paleta** (manteniendo `#00B4BC`):
 
-**Disciplina científica** (filtro secundario, derivado de los títulos):
+- Fondo papel: `oklch(0.985 0.005 90)` (crema sutil).
+- Tinta: `oklch(0.18 0.02 220)` (casi negro azulado).
+- Acento turquesa (#00B4BC) reservado a subrayados, números, hover y un sello tipo "imprimatur".
+- Acento secundario coral muy puntual para badges de novedad.
 
-- General / múltiples
-- Física y Química
-- Matemáticas
-- Biología y Medicina
-- Astronomía
-- Arquitectura e Ingeniería
-- Tecnología y STEAM
-- Historia de la ciencia
+**Detalles que humanizan**:
 
-**Idioma**: Castellano · Català · Inglés · Multilingüe
+- Subrayados SVG dibujados a mano en titulares clave.
+- Pequeñas marcas de anotación (asteriscos, llaves, flechas) en SVG inline al margen.
+- Números de sección estilo revista: "01 — MATERIALES", "02 — RECOMENDADOR".
+- Footer con colofón tipo editorial (créditos, tirada, fecha).
+- Microinteracciones: hover de tarjetas con desplazamiento de 2px y aparición de una flecha "→ leer".
+- Cero degradados violáceos genéricos, cero glassmorphism.
 
-## Funcionalidades (todas en v1)
+## 3. Página `/materiales` (rediseño)
 
-### 1. Hub `/materiales` con filtros en tiempo real
+- Reemplazar tarjetas actuales por **listado tipo índice editorial**: cada material es una fila con número, título serif, descripción breve, badges minimalistas (etapa · tipo · idioma) y un único CTA `Abrir ↗`.
+- Vista alternativa "mosaico" para quien prefiera retícula (toggle discreto).
+- Sidebar de filtros como **"Filtros de redacción"** con chips activos arriba y conteo en vivo.
+- Buscador con placeholder rotativo ("Buscar Marie Curie…", "Buscar pósters de primaria…").
+- Empty state ilustrado a línea (no genérico).
 
-- Sidebar (desktop) / drawer (móvil) con chips de filtro: tipo, etapa, disciplina, idioma.
-- Estado de filtros sincronizado con la URL (search params) → se puede compartir un enlace ya filtrado.
-- Resultado instantáneo, sin recarga. Contador "X materiales encontrados".
-- Botón "Limpiar filtros" siempre visible cuando hay alguno activo.
+## 4. Recomendador → "Diseña tu sesión del 11F"
 
-### 2. Buscador global
+Sustituye el `WizardDialog` actual por una experiencia de 3 pasos + resultado:
 
-- Input prominente arriba del grid.
-- Búsqueda fuzzy con **Fuse.js** sobre título, descripción, autor/fuente y tags.
-- Funciona junto con los filtros (intersección).
+**Paso 1 — Contexto**: etapa educativa, asignatura, tiempo disponible (20/45/90 min), idioma.
+**Paso 2 — Intención**: chips múltiples ("inspirar", "investigar", "crear", "debatir", "celebrar").
+**Paso 3 — Formato preferido**: visual, manipulativo, audiovisual, lúdico.
 
-### 3. Cards de descarga explícita
+**Resultado — Secuencia didáctica generada**:
 
-Cada card muestra:
+- Calentamiento (5–10 min): un material corto (vídeo/póster).
+- Actividad central (20–60 min): material principal coherente con intención.
+- Cierre (5–15 min): juego, kahoot o ficha de reflexión.
+- Cada bloque con su material, duración estimada y un campo de notas editable.
+- Acciones: **copiar al portapapeles** (texto plano formateado para enviar a claustro), **imprimir** (CSS print con cabecera "Sesión 11F · [fecha]"), **enlace permanente** (estado serializado en query params, sin backend).
 
-- Thumbnail/icono coloreado según tipo
-- Título
-- Descripción corta (1-2 líneas)
-- Badges visibles: tipo · etapa · idioma · disciplina
-- Botón principal **"Descargar"** o **"Abrir recurso"** (según destino) → abre el enlace de Drive/web original en nueva pestaña, sin pasos intermedios
-- Botón secundario "Ver fuente oficial" cuando exista
+Algoritmo: scoring sencillo en cliente que pondera coincidencia de etapa (peso alto), disciplina, tipo preferido y duración estimada por tipo de material (constante por `Tipo`). Sin IA, determinista.
 
-### 4. Wizard "¿Qué busco?" (3 pasos)
+## 5. Sorpresas (los detalles que rompen el "look IA")
 
-- Modal/sheet accesible desde un botón flotante y desde la landing.
-- Paso 1: Para quién (Infantil / Primaria / ESO / Bachillerato / Adultos)
-- Paso 2: Qué tipo (Presentación / Vídeo / Juego / Ficha imprimible / Cualquiera)
-- Paso 3: Te lleva a `/materiales?etapa=...&tipo=...` con resultados ya filtrados
-- Animación suave entre pasos
+- **"Cita del día"**: al cargar la home, una cita rotativa de una científica (Curie, Mayer, Ride, Yonath…) en una banda tipográfica grande con su firma manuscrita en SVG.
+- **Modo "papel cuadriculado"** opcional: toggle en el footer que activa un fondo de retícula 4mm sutil tipo cuaderno.
+- **Cuenta atrás al 11F** discreta en el header ("Faltan 23 días para el 11F") que desaparece tras la fecha. Recuerda q seria el 11f de 2027
+- **Sello "verificado"** en cada material cuyo enlace ha pasado la auditoría HTTP, con tooltip "Comprobado el [fecha]".
+- &nbsp;
 
-### 5. Badges visuales en cada material
+## 6. Detalles técnicos
 
-Chips de color con icono distintivo por tipo y etapa. Permiten escanear el grid sin leer títulos.
+- Quitar `Adultos` del enum `ETAPAS` y depurar materiales (script de migración o edición manual de `materiales.ts`).
+- Añadir campo `verificado: boolean` y `enlaceVerificadoEn: string` a `Material`.
+- Script `scripts/audit-links.mjs` (Node, `fetch` con timeout 8s, HEAD con fallback a GET) que reescribe `materiales.ts` con el campo `verificado`.
+- Tipografías con `<link rel="preconnect">` a Google Fonts en `__root.tsx`.
+- Recomendador: nuevo componente `<SesionRecomendada>` + utilidad `recomendarSesion(input): Bloque[]` testeable.
+- CSS de impresión en `styles.css` (`@media print`).
+- Persistencia de modo papel y atajos en `localStorage`.
 
-### 6. UX extras
+## 7. Necesito de ti antes de implementar
 
-- Modo oscuro automático respetando preferencia del sistema
-- Skeleton loaders mientras carga
-- Empty state con sugerencias cuando un filtro no devuelve resultados
-- Toast de feedback al abrir un recurso
-- 100% responsive, mobile-first
+- **Re-subir el Excel** (`11F_materiales.xlsx` o equivalente) para reconciliar enlaces fila a fila.
 
-## Identidad visual
-
-- **Color primario** `#00B4BC` (turquesa identitario 11F) — convertido a `oklch` y usado en tokens semánticos (`--primary`, gradientes, glow).
-- **Acentos**: rosa cálido (#E91E63 suave) y morado profundo como acentos secundarios para diferenciar tipos de recurso.
-- **Tipografía**: sans-serif moderna (Inter o similar) + display contundente para titulares.
-- Microinteracciones, gradientes sutiles `--primary` → `--primary-glow`, sombras elegantes.
-- Hero con ilustración/composición vibrante alusiva a mujeres en ciencia (imagen generada).
-- Iconos lucide-react para badges de categoría.
-
-## Datos
-
-Los ~50+ materiales del Excel se modelan en un único array tipado en `src/data/materiales.ts`:
-
-```ts
-type Material = {
-  id: string;
-  titulo: string;
-  descripcion: string;
-  tipo: TipoRecurso;
-  etapas: Etapa[];
-  disciplinas: Disciplina[];
-  idioma: Idioma;
-  enlace: string;          // Drive o web original
-  enlaceFuente?: string;   // 11defebrero.org u oficial
-  thumbnail?: string;      // opcional
-};
-```
-
-Sin backend: todo client-side. Filtros + búsqueda en memoria → instantáneo.
-
-## Stack técnico
-
-- TanStack Start + TanStack Router (rutas separadas, search params tipados con `zodValidator` + `fallback`)
-- Tailwind v4 + tokens `oklch` en `src/styles.css`
-- shadcn/ui (Card, Badge, Sheet/Drawer, Dialog para wizard, Input, Select)
-- Fuse.js para búsqueda fuzzy
-- lucide-react para iconografía
-- Imagen hero generada con `imagegen` en calidad standard
-
-## Entregables del primer build
-
-1. Tokens `oklch` con `#00B4BC` como `--primary` + gradientes y sombras
-2. `src/data/materiales.ts` con todos los recursos del Excel categorizados
-3. Componentes: `MaterialCard`, `FilterSidebar`, `SearchBar`, `WizardDialog`, `Hero`, `SiteHeader`, `SiteFooter`
-4. Rutas: `/`, `/materiales`, `/sobre-el-11f`, `/contacto` con `head()` propios
-5. Search params tipados en `/materiales` (etapa, tipo, disciplina, idioma, q)
-6. Imagen hero generada
-7. SEO básico: títulos, meta descriptions, semantic HTML, H1 único por página, alt text
+Cuando tenga el Excel, ejecuto auditoría + reconciliación, depuro "Adultos", aplico el rediseño editorial y el nuevo recomendador en una sola tanda.
