@@ -23,10 +23,10 @@ import { cn } from "@/lib/utils";
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
-  tipo: fallback(z.enum(TIPOS).optional(), undefined),
-  etapa: fallback(z.enum(ETAPAS).optional(), undefined),
-  disciplina: fallback(z.enum(DISCIPLINAS).optional(), undefined),
-  idioma: fallback(z.enum(IDIOMAS).optional(), undefined),
+  tipo: z.enum(TIPOS).optional(),
+  etapa: z.enum(ETAPAS).optional(),
+  disciplina: z.enum(DISCIPLINAS).optional(),
+  idioma: z.enum(IDIOMAS).optional(),
 });
 
 export const Route = createFileRoute("/materiales")({
